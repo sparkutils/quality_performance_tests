@@ -87,6 +87,14 @@
 
     </properties>
 
+    <repositories>
+        <repository>
+            <id>ossrh_snap</id>
+            <name>Quality Snapshot Repository</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>ossrh</id>
