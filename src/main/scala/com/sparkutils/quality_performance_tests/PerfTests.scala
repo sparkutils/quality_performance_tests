@@ -136,13 +136,13 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
 
     measure method "copy in codegen" in {
       forceCodeGen {
-        using(rows) in evaluate(_, "copy_codegen")
+        using(rows) in evaluate(identity, "copy_codegen")
       }
     }
 
     measure method "copy in interpreted" in {
       forceInterpreted {
-        using(rows) in evaluate(_, "copy_interpreted")
+        using(rows) in evaluate(identity, "copy_interpreted")
       }
     }
 
