@@ -24,5 +24,5 @@ jobs:
         }
       storeTarget: target/benchmarks
       additionalShellCommand: benchmark
-      testString: -DskipTests
+      testString: -DskipTests -Dgpg.skip
     secrets: inherit
