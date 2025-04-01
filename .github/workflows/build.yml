@@ -26,5 +26,6 @@ jobs:
       additionalShellCommand: benchmark
       testString: -DskipTests -Dgpg.skip
       sparkVersion: 3.5.5
-      scalaSparkVersion: 2.12
+      hadoopVersion: 3
+      # spark-url: 'https://dlcdn.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz'
     secrets: inherit
