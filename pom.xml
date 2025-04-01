@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>  <!-- rebuild -->
     <groupId>com.sparkutils</groupId>
-    <artifactId>quality_performance_tests_${qualityVersion}</artifactId>
+    <artifactId>quality_performance_tests_${profileDir}</artifactId>
 
     <version>${revision}</version>
     <name>Quality performance tests</name>
