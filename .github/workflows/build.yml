@@ -25,6 +25,6 @@ jobs:
       storeTarget: target/benchmarks
       additionalShellCommand: benchmark
       testString: -DskipTests -Dgpg.skip
-      sparkVersion: '3.5.5'
-      scalaSparkVersion: '2.12'
+      sparkVersion: 3.5.5
+      scalaSparkVersion: 2.12
     secrets: inherit

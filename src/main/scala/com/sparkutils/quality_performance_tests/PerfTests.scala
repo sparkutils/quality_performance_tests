@@ -93,7 +93,7 @@ object TestData {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box
+  val MAXSIZE = 100000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box
   val STEP =    100000
 
   def main(args: Array[String]): Unit = {
@@ -109,6 +109,7 @@ object TestSourceData extends TestUtils {
       setup(i)
     }
 
+    sparkSession.close()
   }
 }
 
@@ -136,25 +137,25 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
 
     measure method "copy in codegen" in {
       forceCodeGen {
-        using(rows) in evaluate(identity, "copy_codegen")
+        using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_codegen")
       }
     }
 
     measure method "copy in interpreted" in {
       forceInterpreted {
-        using(rows) in evaluate(identity, "copy_interpreted")
+        using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
     }
 
     measure method "baseline in codegen" in {
       forceCodeGen {
-        using(rows) in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
+        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
     }
 
     measure method "baseline in interpreted" in {
       forceInterpreted {
-        using(rows) in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
+        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
       }
     }/*
 
@@ -198,27 +199,27 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
 */
     measure method "no forceEval in codegen compile evals false" in {
       forceCodeGen {
-        using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false")
+        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false")
       }
     }
 
     measure method "no forceEval in interpreted compile evals false" in {
       forceInterpreted {
-        using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false")
+        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false")
       }
     }
 
     measure method "no forceEval in codegen compile evals false - extra config" in {
       forceCodeGen {
         extraPerfOptions {
-          using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false_extra_config")
+          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false_extra_config")
         }
       }
     }
     measure method "no forceEval in interpreted compile evals false - extra config" in {
       forceInterpreted {
         extraPerfOptions {
-          using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config")
+          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config")
         }
       }
     }
