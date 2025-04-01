@@ -24,4 +24,5 @@ jobs:
         }
       storeTarget: target/benchmarks
       additionalShellCommand: benchmark
+      testString: -DskipTests
     secrets: inherit
