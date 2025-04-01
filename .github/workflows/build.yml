@@ -15,11 +15,13 @@ env:
 jobs:
 
   publish:
-    uses: sparkutils/building/.github/workflows/publish_build.yml@main
+    uses: sparkutils/building/.github/workflows/run_build.yml@main
     with:
       theMatrix: |
         {
-          "profile": ["dummy"],
-          "scala": ["scala_2.12", "scala_2.13"]
+          "profile": ["v0.1.3.1-RC4", "v0.1.3.1-RC5-SNAPSHOT"],
+          "scala": ["dummy"]
         }
+      storeTarget: target/benchmarks
+      additionalShellCommand: benchmark
     secrets: inherit

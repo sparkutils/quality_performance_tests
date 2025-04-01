@@ -26,7 +26,28 @@
     </scm>
 
     <packaging>jar</packaging>
+
+
+    <profiles>
+        <profile>
+            <id>v0.1.3.1-RC5</id>
+            <properties>
+                <qualityVersion>0.1.3.1-RC5-SNAPSHOT</qualityVersion>
+                <profileDir>v0_1_3_1_RC5</profileDir>
+            </properties>
+        </profile>
+        <profile>
+            <id>v0.1.3.1-RC4</id>
+            <properties>
+                <qualityVersion>0.1.3.1-RC4</qualityVersion>
+                <profileDir>v0_1_3_1_RC4</profileDir>
+            </properties>
+        </profile>
+    </profiles>
     <properties>
+
+        <revision>0.0.1-SNAPSHOT</revision>
+
         <scalaVersion>2.12.18</scalaVersion>
         <scalaCompatVersion>2.12</scalaCompatVersion>
 
@@ -38,11 +59,8 @@
 
         <junitVersion>4.12</junitVersion>
         <scalatestVersion>3.0.7</scalatestVersion>
-        <qualityVersion>0.1.3.1-RC5-SNAPSHOT</qualityVersion>
 
-
-        <revision>0.0.1-SNAPSHOT</revision>
-
+        <mavenExecPluginVersion>3.5.0</mavenExecPluginVersion>
         <mavenProjectInfoReportsPluginVersion>3.4.5</mavenProjectInfoReportsPluginVersion>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -175,7 +193,7 @@
     <build>
         <testResources>
             <testResource>
-                <directory>${project.basedir}/../src/test/resources</directory>
+                <directory>src/test/resources</directory>
                 <filtering>true</filtering>
             </testResource>
         </testResources>
@@ -272,7 +290,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/../src/main/scala</source>
+                                <source>src/main/scala</source>
+                                <source>${profileDir}/src/main/scala</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -284,7 +303,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/../src/main/scala</source>
+                                <source>src/main/scala</source>
+                                <source>${profileDir}/src/main/scala</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -404,6 +424,21 @@
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     <stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>maven</executable>
                 </configuration>
             </plugin>
         </plugins>
