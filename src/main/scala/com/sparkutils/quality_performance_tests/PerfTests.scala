@@ -104,11 +104,32 @@ object TestData {
   val jsonBaseline = baselineRules(s"from_json(payload, $schema).")
 }
 
+object Args {
+  val args = List(
+    "-Xmx12g","-Xms12g",// 16GB on github runners
+    "-ea",
+    "-XX:+IgnoreUnrecognizedVMOptions",
+    "--add-opens=java.base/java.lang=ALL-UNNAMED",
+    "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+    "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+    "--add-opens=java.base/java.io=ALL-UNNAMED",
+    "--add-opens=java.base/java.net=ALL-UNNAMED",
+    "--add-opens=java.base/java.nio=ALL-UNNAMED",
+    "--add-opens=java.base/java.util=ALL-UNNAMED",
+    "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+    "--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+    "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+    "--add-opens=java.base/sun.nio.cs=ALL-UNNAMED",
+    "--add-opens=java.base/sun.security.action=ALL-UNNAMED",
+    "--add-opens=java.base/sun.util.calendar=ALL-UNNAMED"
+  )
+}
+
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn
-  val STEP =    100000
+  val MAXSIZE = 10000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn
+  val STEP =    10000
 
   def main(args: Array[String]): Unit = {
 
@@ -144,11 +165,24 @@ object PerfTests extends Bench.Group with TestUtils {
     exec.maxWarmupRuns -> 4,
     exec.benchRuns -> 4,
     exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
-    exec.jvmflags -> List("-Xmx12g","-Xms12g") // 16GB on github runners
+    exec.jvmflags -> Args.args,
+    reports.resultDir -> "target/benchmarks/default"
     //  verbose -> true
   ) in {
 
     include(new PerfTestBase with Fwder)
+  }
+
+  performance of "resultWriting" config (
+    exec.minWarmupRuns -> 2,
+    exec.maxWarmupRuns -> 4,
+    exec.benchRuns -> 4,
+    exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
+    exec.jvmflags -> Args.args, // 16GB on github runners
+    reports.resultDir -> "target/benchmarks/profileSpecific"
+    //  verbose -> true
+  ) in {
+
     include(new ExtraPerfTests with Fwder)
   }
 }
@@ -181,7 +215,7 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
     exec.maxWarmupRuns -> 4,
     exec.benchRuns -> 4,
     exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
-    exec.jvmflags -> List("-Xmx12g","-Xms12g") // 16GB on github runners
+    exec.jvmflags -> Args.args // 16GB on github runners
     //  verbose -> true
   ) in {
 
@@ -190,82 +224,82 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
     dumpTime
 /*
     measure method "copy in codegen" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_codegen")
       }
     }
 
     measure method "copy in interpreted" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
     }
 
     measure method "baseline in codegen" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
     }
 
     measure method "baseline in interpreted" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
       }
     }
-
+*/
     measure method "json baseline in codegen" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
       }
     }
 
     measure method "json baseline in interpreted" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_interpreted")
       }
-    }*/
+    }
     /*
 
    // the below aren't really that interesting, they perform well on lower row counts but not on higher counts
 
     measure method "forceEval in codegen" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = true)), "forceEval_in_codegen")
       }
     }
 
     measure method "forceEval in interpreted" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = true)), "forceEval_in_interpreted")
       }
     }
 
     measure method "forceEval in codegen compileEvals false" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = true, compileEvals = false)), "forceEval_in_codegen_compile_evals_false")
       }
     }
 
     measure method "forceEval in interpreted compileEvals false" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = true, compileEvals = false)), "forceEval_in_interpreted_compile_evals_false")
       }
     }
 
     measure method "no forceEval in codegen" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false)), "no_forceEval_in_codegen")
       }
     }
 
     measure method "no forceEval in interpreted" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false)), "no_forceEval_in_interpreted")
       }
     }
 *//*
     measure method "no forceEval in codegen compile evals false" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false")
       }
     }

@@ -62,7 +62,7 @@
         <sparkCompatVersion>3.5</sparkCompatVersion>
         <shimRuntime>4.0.0.oss</shimRuntime>
         <jacksonVersion>2.15.2</jacksonVersion>
-        <scalaMeterVersion>0.0.1</scalaMeterVersion>
+        <scalaMeterVersion>0.0.2</scalaMeterVersion>
 
         <junitVersion>4.12</junitVersion>
         <scalatestVersion>3.0.7</scalatestVersion>
@@ -95,6 +95,7 @@
         <!-- dmn stuff -->
         <kogitoPomVersion>10.0.0</kogitoPomVersion>
         <kogitoPluginVersion>10.0.0</kogitoPluginVersion>
+        <shadedKogitoVersion>0.0.10</shadedKogitoVersion>
     </properties>
 <!--
     <repositories>
@@ -118,18 +119,18 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <dependencies><!--
+    <dependencies>
         <dependency>
-            <groupId>org.kie.kogito</groupId>
-            <artifactId>kogito-bom</artifactId>
-            <version>${kogitoPomVersion}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency> -->
-        <dependency>
-            <groupId>org.kie.kogito</groupId>
-            <artifactId>kogito-dmn</artifactId>
-            <version>${kogitoPomVersion}</version>
+            <groupId>com.sparkutils</groupId>
+            <artifactId>kogito_shaded</artifactId>
+            <version>${shadedKogitoVersion}</version>
+            <!--
+            <exclusions>
+                <exclusion>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-runtime</artifactId> <! - - 4.10.1 from here, 4.9.3 needed by spark - ->
+                </exclusion>
+            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>com.globalmentor</groupId>
