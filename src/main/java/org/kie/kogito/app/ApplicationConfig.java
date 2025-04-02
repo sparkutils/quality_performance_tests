@@ -16,7 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package app;
+package org.kie.kogito.app;
 
-public class DecisionConfig extends org.kie.kogito.dmn.config.StaticDecisionConfig {
+public class ApplicationConfig extends org.kie.kogito.StaticConfig {
+
+    public ApplicationConfig() {
+        super(/* additional values provided during codegen */
+        new org.kie.kogito.Addons(java.util.Set.of()), new ConfigBean(), new DecisionConfig());
+    }
 }

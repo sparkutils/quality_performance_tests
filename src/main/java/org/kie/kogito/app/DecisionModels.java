@@ -16,12 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package app;
+package org.kie.kogito.app;
 
-public class ApplicationConfig extends org.kie.kogito.StaticConfig {
+public class DecisionModels extends org.kie.kogito.dmn.AbstractDecisionModels {
 
-    public ApplicationConfig() {
-        super(/* additional values provided during codegen */
-        new org.kie.kogito.Addons(java.util.Set.of()), new ConfigBean(), new DecisionConfig());
+    static {
+        init(/* arguments provided during codegen */
+        null, null, readResource(Application.class.getResourceAsStream("/common.dmn"), "UTF-8"), readResource(Application.class.getResourceAsStream("/decisions.dmn"), "UTF-8"));
+    }
+
+    public DecisionModels(org.kie.kogito.Application app) {
+        super(app);
     }
 }

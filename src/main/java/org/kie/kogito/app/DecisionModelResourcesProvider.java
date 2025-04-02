@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package app;
+package org.kie.kogito.app;
 
 public class DecisionModelResourcesProvider implements org.kie.kogito.decision.DecisionModelResourcesProvider {
 
