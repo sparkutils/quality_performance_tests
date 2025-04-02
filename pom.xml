@@ -97,7 +97,7 @@
         <kogitoPluginVersion>10.0.0</kogitoPluginVersion>
         <shadedKogitoVersion>0.0.10</shadedKogitoVersion>
     </properties>
-<!--
+<!-- -->
     <repositories>
         <repository>
             <id>ossrh_snap</id>
@@ -105,7 +105,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
--->
+
     <distributionManagement>
         <repository>
             <id>ossrh</id>
