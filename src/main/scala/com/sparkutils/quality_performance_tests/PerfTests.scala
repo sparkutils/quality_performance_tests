@@ -3,7 +3,7 @@ package com.sparkutils.quality_performance_tests
 import com.sparkutils.quality
 import com.sparkutils.quality._
 import com.sparkutils.qualityTests.TestUtils
-import com.sparkutils.quality_performance_tests.PerfTestUtils.extraPerfOptions
+import com.sparkutils.quality_performance_tests.PerfTestUtils.ExtraPerfTests
 import com.sparkutils.quality_performance_tests.PerfTests.sparkSession
 import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, inputsDir}
 import org.apache.spark.sql
@@ -107,8 +107,8 @@ object TestData {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
-  val MAXSIZE = 2000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box
-  val STEP =    2000000
+  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn
+  val STEP =    100000
 
   def main(args: Array[String]): Unit = {
 
@@ -126,8 +126,18 @@ object TestSourceData extends TestUtils {
     sparkSession.close()
   }
 }
+object PerfTests extends Bench.Group with TestUtils {
 
-object PerfTests extends Bench.OfflineReport with TestUtils {
+  trait Fwder {
+
+
+    // if this blows then debug on CodeGenerator 1294, 1299 and grab code.body
+    def _forceCodeGen[T](f: => T): T = forceCodeGen(f)
+
+    def _forceInterpreted[T](f: => T): T = forceInterpreted(f)
+
+    def _outputDir: String = outputDir
+  }
 
   performance of "resultWriting" config (
     exec.minWarmupRuns -> 2,
@@ -138,17 +148,47 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
     //  verbose -> true
   ) in {
 
-    val rows = Gen.range("rowCount")(STEP, MAXSIZE, STEP)
+    include(new PerfTestBase with Fwder)
+    include(new ExtraPerfTests with Fwder)
+  }
+}
+
+trait BaseConfig {
+
+  val rows = Gen.range("rowCount")(STEP, MAXSIZE, STEP)
+
+  def _outputDir: String
+
+  // dump the file for the row size into a new copy
+  def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
+    fdf(sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+  }
+
+  def dumpTime =
+    println("Time is " + java.time.LocalTime.now())
+
+
+  // if this blows then debug on CodeGenerator 1294, 1299 and grab code.body
+  def _forceCodeGen[T](f: => T): T
+
+  def _forceInterpreted[T](f: => T): T
+}
+
+trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
+
+  performance of "resultWriting" config (
+    exec.minWarmupRuns -> 2,
+    exec.maxWarmupRuns -> 4,
+    exec.benchRuns -> 4,
+    exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
+    exec.jvmflags -> List("-Xmx12g","-Xms12g") // 16GB on github runners
+    //  verbose -> true
+  ) in {
 
     quality.registerQualityFunctions()
 
-    println("Time is "+java.time.LocalTime.now())
-
-    // dump the file for the row size into a new copy
-    def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-      fdf(sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).write.mode(SaveMode.Overwrite).parquet(outputDir + s"/testOutputData_${testCase}_${params}_rows")
-    }
-
+    dumpTime
+/*
     measure method "copy in codegen" in {
       forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_codegen")
@@ -183,7 +223,7 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
       forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_interpreted")
       }
-    }
+    }*/
     /*
 
    // the below aren't really that interesting, they perform well on lower row counts but not on higher counts
@@ -223,7 +263,7 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
         using(rows) in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false)), "no_forceEval_in_interpreted")
       }
     }
-*/
+*//*
     measure method "no forceEval in codegen compile evals false" in {
       forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false")
@@ -235,51 +275,17 @@ object PerfTests extends Bench.OfflineReport with TestUtils {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false")
       }
     }
-
-    measure method "no forceEval in codegen compile evals false - extra config" in {
-      forceCodeGen {
-        extraPerfOptions {
-          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false_extra_config")
-        }
-      }
-    }
-
-    measure method "no forceEval in interpreted compile evals false - extra config" in {
-      forceInterpreted {
-        extraPerfOptions {
-          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config")
-        }
-      }
-    }
-
     measure method "json no forceEval in codegen compile evals false" in {
-      forceCodeGen {
+      _forceCodeGen {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false")
       }
     }
 
     measure method "json no forceEval in interpreted compile evals false" in {
-      forceInterpreted {
+      _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_interpreted_compile_evals_false")
       }
-    }
-
-    measure method "json no forceEval in codegen compile evals false - extra config" in {
-      forceCodeGen {
-        extraPerfOptions {
-          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
-        }
-      }
-    }
-
-    measure method "json no forceEval in interpreted compile evals false - extra config" in {
-      forceInterpreted {
-        extraPerfOptions {
-          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_interpreted_compile_evals_false_extra_config")
-        }
-      }
-    }
-
+    }*/
   }
 
 }

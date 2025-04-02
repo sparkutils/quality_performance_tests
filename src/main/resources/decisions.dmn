@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://kie.org/dmn/_2A8FD60D-746C-4A21-AF7B-2D2D92A33E77" id="_43720B79-E363-4EFF-A334-4F5C5E052DD3" name="DMN_E30B553D-E298-46E4-8D36-295EF7A9961C" xmlns:included0="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0">
+  <import id="_502EA86E-F162-47D2-BF89-E85AEC76C045" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF" locationURI="./common.dmn" />
+  <decision name="evaluate" id="_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C">
+    <variable name="evaluate" id="_8F01A22B-574F-4596-8AE0-55DC85BC5383" typeRef="context" />
+    <informationRequirement id="_45678822-EA6F-40E8-83D9-C903C28AA4CF">
+      <requiredInput href="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF#_FB91C5E3-6928-4513-90DB-7F0B47212870" />
+    </informationRequirement>
+    <informationRequirement id="_238CE051-B1A0-4E04-8A16-4DF3B5AF35B9">
+      <requiredDecision href="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF#_3A672BB8-C0A3-4C8E-988F-E4595772AE02" />
+    </informationRequirement>
+    <informationRequirement id="_25A66EE3-498D-436F-9A25-BF219B1472DF">
+      <requiredDecision href="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF#_EDA58933-25D8-4432-A900-43836E3A6B2B" />
+    </informationRequirement>
+    <context id="_530436C4-9814-4931-9B8D-D72FC63CE97D" typeRef="context" label="evaluate">
+      <contextEntry id="_BE1AB939-26CE-4BE7-9FB8-E9AE858EFA90">
+        <variable id="_2976F475-8616-40E5-9E3E-83C84B6473B7" name="r1" typeRef="boolean" />
+        <literalExpression id="_35B02DB9-6AEB-4B2A-8D0D-C72518664629" typeRef="boolean" label="r1">
+          <text>common.common.dq is applicable for(&quot;Non UK&quot;, common.payload.location) and common.payload.department = &quot;sales&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_99CB78F0-687F-4EC0-8A01-FDFB934594EE">
+        <variable id="_E3C6B1B2-27BA-42B6-BEA9-B4E2F411F735" name="r2" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_801BFF09-11B4-42DA-835E-C51592B9BBE2" typeRef="boolean" label="r2">
+          <text>common.common.dq is applicable for(&quot;UK &amp; US&quot;, common.payload.location) and common.payload.department = &quot;marketing&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_ABD1BE69-DBA5-492F-A96C-808E95DEF97B">
+        <variable id="_CB2F8341-4AE6-427A-AA8F-EA7D293E3C95" name="r3" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_F0B940FB-9AF3-435C-8BF4-1E9177E63ED3" typeRef="boolean" label="r3">
+          <text>common.common.dq is applicable for(&quot;Americas&quot;, common.payload.location) and common.payload.department = &quot;hr&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_17797A7A-5C7D-48D4-A064-9F28C6224DDF">
+        <variable id="_1644ABDE-F94E-4855-9010-65F37E558FEF" name="r4" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_5108F738-8E5A-405E-885F-5DFC044EAF1E" typeRef="boolean" label="r4">
+          <text>common.common.dq is applicable for(&quot;Europe&quot;, common.payload.location) and common.payload.department = &quot;it&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_2E48DD6F-872C-40FE-8DF2-90A7250D7030">
+        <variable id="_4B6CC521-B7AB-42CB-BA6B-B1D3EB4327CE" name="r5" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_72EF3DE9-8663-4030-A7E2-202B48460844" typeRef="boolean" label="r5">
+          <text>common.isMissing(common.payload.id) and common.payload.department = &quot;ops&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_BAE7B5E5-5F1F-413B-BB04-6D73565FD30B">
+        <variable id="_C37675E5-4B65-40CB-A64D-A94B3904DF35" name="r6" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_B778ADFB-807F-413B-AEF4-BFBA632E5351" typeRef="boolean" label="r6">
+          <text>common.common.dq is applicable for(&quot;Non UK&quot;, common.payload.location) and common.payload.department = &quot;marketing&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_0F3B81C7-B9E8-4EC4-90AC-4A8A68CE5A3B">
+        <variable id="_642AC143-A7DE-4D43-8FCB-A02A0E2CE327" name="r7" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_B001265D-8469-4DBD-81C8-A24442F491E0" typeRef="boolean" label="r7">
+          <text>common.common.dq is applicable for(&quot;UK &amp; US&quot;, common.payload.location) and common.payload.department = &quot;hr&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_3941E880-D53A-4A07-B917-38C929298ABC">
+        <variable id="_4522288C-38D6-4CB1-A5F2-0FBF27113160" name="r8" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_E408A677-F091-4E7E-9C52-96DFEF5CEB69" typeRef="boolean" label="r8">
+          <text>common.common.dq is applicable for(&quot;Americas&quot;, common.payload.location) and common.payload.department = &quot;it&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_E94358A6-F11E-4B4A-AB87-02EDFD2F2F08">
+        <variable id="_9070734B-F41E-4506-B82E-6CDAD3CB0687" name="r9" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_FF42EF4D-7F10-4181-B503-9A1773FD141D" typeRef="boolean" label="r9">
+          <text>common.common.dq is applicable for(&quot;Europe&quot;, common.payload.location) and common.payload.department = &quot;sales&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_E5A6165A-959D-4968-9535-34B4E1CD3077">
+        <variable id="_8D11CD40-325E-41C8-9AD4-F412C64FE92B" name="r10" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_437BD62B-793D-498C-AE23-5C1A8B9248A2" typeRef="boolean" label="r10">
+          <text>common.isMissing(common.payload.id) and common.payload.department = &quot;sales&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_FE8883FC-3C1F-4BCD-8225-D7B57C1BEBA8">
+        <variable id="_13DCC1E9-16CF-4CC1-89EA-680A7BA0CBAA" name="r11" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_48131F07-7A1A-41F2-8A8A-B54135A45A3E" typeRef="boolean" label="r11">
+          <text>common.common.dq is applicable for(&quot;Non UK&quot;, common.payload.location) and common.payload.department = &quot;sales&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_564740E7-2F0E-4E7D-AC4A-12261EE88066">
+        <variable id="_B011E854-E32E-47DC-9B37-B3D9C0556A0C" name="r12" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_112DF6F5-13EA-4514-A721-667766B55CEA" typeRef="boolean" label="r12">
+          <text>common.common.dq is applicable for(&quot;UK &amp; US&quot;, common.payload.location) and common.payload.department = &quot;hr&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_9B6BD4C8-ACB8-4F23-887F-C1B9823130BB">
+        <variable id="_5BC6A55E-9BB8-45B9-8174-214D774E0CE3" name="r13" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_762A60D3-7EFB-4E30-9065-706CD85625AC" typeRef="boolean" label="r13">
+          <text>common.common.dq is applicable for(&quot;Americas&quot;, common.payload.location) and common.payload.department = &quot;sales&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_FD6990CE-739B-4A18-BD2A-9683F3BB82DF">
+        <variable id="_151584F8-777D-494D-A98C-35022D7D048E" name="r14" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_4F2DA5B5-E031-4929-9650-4244F3515EFC" typeRef="boolean" label="r14">
+          <text>common.common.dq is applicable for(&quot;Europe&quot;, common.payload.location) and common.payload.department = &quot;hr&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_B83128C5-0C8D-433D-AC03-C262AD12D8F9">
+        <variable id="_4CCD8FE9-58C3-4AEC-8B73-11D2196FCD5F" name="r15" typeRef="boolean">
+          <description></description>
+        </variable>
+        <literalExpression id="_6B246DBE-3ADC-4180-BBC6-0C7ABA639277" typeRef="boolean" label="r15">
+          <text>common.isMissing(common.payload.id) and common.payload.department = &quot;hr&quot;</text>
+        </literalExpression>
+      </contextEntry>
+      <contextEntry id="_752DE4B2-5CD4-483A-BFDD-2398DA748060">
+        <literalExpression id="_19F151D9-4967-49EB-8A7A-8A5CB8619330" typeRef="context" label="evaluate">
+          <text>[r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15]</text>
+        </literalExpression>
+      </contextEntry>
+    </context>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_2F1C2A67-7772-4BD5-9C7A-433C7ECF0334" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="_530436C4-9814-4931-9B8D-D72FC63CE97D">
+            <kie:width>120</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_35B02DB9-6AEB-4B2A-8D0D-C72518664629">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_801BFF09-11B4-42DA-835E-C51592B9BBE2">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_F0B940FB-9AF3-435C-8BF4-1E9177E63ED3">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_5108F738-8E5A-405E-885F-5DFC044EAF1E">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_72EF3DE9-8663-4030-A7E2-202B48460844">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_B778ADFB-807F-413B-AEF4-BFBA632E5351">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_B001265D-8469-4DBD-81C8-A24442F491E0">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_E408A677-F091-4E7E-9C52-96DFEF5CEB69">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_FF42EF4D-7F10-4181-B503-9A1773FD141D">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_437BD62B-793D-498C-AE23-5C1A8B9248A2">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_48131F07-7A1A-41F2-8A8A-B54135A45A3E">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_112DF6F5-13EA-4514-A721-667766B55CEA">
+            <kie:width>1174</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_762A60D3-7EFB-4E30-9065-706CD85625AC">
+            <kie:width>190</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_4F2DA5B5-E031-4929-9650-4244F3515EFC">
+            <kie:width>190</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_6B246DBE-3ADC-4180-BBC6-0C7ABA639277">
+            <kie:width>190</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_19F151D9-4967-49EB-8A7A-8A5CB8619330">
+            <kie:width>190</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_121C753E-4CE6-4555-B3CE-552C049EC582" dmnElementRef="_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="760" y="240" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_58A66436-7060-47DE-8E6A-A305ADF32846" dmnElementRef="included0:_FB91C5E3-6928-4513-90DB-7F0B47212870">
+        <dc:Bounds x="640" y="40" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_98DAABDC-8845-4451-881B-1907F5E6E7EB" dmnElementRef="_45678822-EA6F-40E8-83D9-C903C28AA4CF" sourceElement="_58A66436-7060-47DE-8E6A-A305ADF32846" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
+        <di:waypoint x="720" y="80" />
+        <di:waypoint x="840" y="240" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="_FED32608-84A2-43C2-B447-FB744938D38A" dmnElementRef="included0:_EDA58933-25D8-4432-A900-43836E3A6B2B">
+        <dc:Bounds x="480" y="280" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_E94A87A3-6B0E-4B9B-AC3A-375A355B7D5D" dmnElementRef="included0:_3A672BB8-C0A3-4C8E-988F-E4595772AE02">
+        <dc:Bounds x="480" y="140" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_83EAD8BD-5CAD-44E5-90D0-6023B82C0D38" dmnElementRef="_238CE051-B1A0-4E04-8A16-4DF3B5AF35B9" sourceElement="_E94A87A3-6B0E-4B9B-AC3A-375A355B7D5D" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
+        <di:waypoint x="560" y="180" />
+        <di:waypoint x="760" y="280" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="_D6FDA1EE-83E1-4EE7-95D1-D0BB44CE39B3" dmnElementRef="_25A66EE3-498D-436F-9A25-BF219B1472DF" sourceElement="_FED32608-84A2-43C2-B447-FB744938D38A" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
+        <di:waypoint x="560" y="320" />
+        <di:waypoint x="760" y="280" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

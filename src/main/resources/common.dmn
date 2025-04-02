@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF" id="_BD074D23-9086-495D-AB01-B2E10E196F84" name="DMN_BE29EEFB-95DF-45E2-921A-DE6D356BC1E8">
+  <itemDefinition id="_FB776935-97B3-4952-AEDC-6B0382D0EEB2" name="strings" isCollection="true" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>string</typeRef>
+  </itemDefinition>
+  <itemDefinition id="_120D2183-4AAF-4F57-B818-8CB0B150992B" name="TestData" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <description>sample test data</description>
+    <itemComponent id="_4F18FF6D-1209-4A0F-9F25-10FE428E702A" name="location" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+      <typeRef>string</typeRef>
+    </itemComponent>
+    <itemComponent id="_2E0CFF3E-6986-4F92-977C-53430F105317" name="idPrefix" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+      <typeRef>string</typeRef>
+    </itemComponent>
+    <itemComponent id="_EF10BACD-1789-44C6-A127-B74D51BE06E0" name="id" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+      <typeRef>number</typeRef>
+    </itemComponent>
+    <itemComponent id="_6325BA7F-61F1-4A0A-B7E5-4AB9B1350C92" name="page" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+      <typeRef>number</typeRef>
+    </itemComponent>
+    <itemComponent id="_87593512-5BB4-4357-8E5C-EABC3F5D5DB8" name="department" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+      <typeRef>string</typeRef>
+    </itemComponent>
+  </itemDefinition>
+  <inputData name="payload" id="_FB91C5E3-6928-4513-90DB-7F0B47212870">
+    <variable name="payload" id="_8F5E156B-571C-4A21-9CC9-C368E278CA23" typeRef="TestData" />
+  </inputData>
+  <decision name="dq is applicable for" id="_3A672BB8-C0A3-4C8E-988F-E4595772AE02">
+    <variable name="dq is applicable for" id="_18BF082E-87A2-4363-9DE7-707E2FFD2412" typeRef="context" />
+    <informationRequirement id="_DE55E96B-3CC2-4CE7-921D-5F995810A8A3">
+      <requiredInput href="#_C8784D2C-723D-4753-AE83-891665D014F8" />
+    </informationRequirement>
+    <informationRequirement id="_69C19496-5157-40E4-AF2F-8435C752BBFC">
+      <requiredInput href="#_D7C64B83-9DB7-454C-9ECF-8018AADD7E58" />
+    </informationRequirement>
+    <context id="_1B51E836-B022-45BB-807A-F861E8FC36B5" typeRef="context" label="dq is applicable for">
+      <contextEntry id="_9FF8349F-8819-4137-8949-DAEB7AD2C22D">
+        <variable id="_D5B940DD-F2BA-4DB4-8D42-4069E8E60095" name="location_expanded" typeRef="strings" />
+        <decisionTable id="_2C6870E8-8AC4-422B-AB34-29199B740342" typeRef="strings" hitPolicy="UNIQUE" label="location_expanded">
+          <input id="_33E15924-35F3-444F-B60B-939B701D3CD1">
+            <inputExpression id="_780A9C15-DC03-44AC-BADC-D032BAEDA0E7" typeRef="string">
+              <text>locations</text>
+            </inputExpression>
+          </input>
+          <output id="_63BD54B2-3B27-4FBE-8C09-3D0DD2C4CE87" name="Output-3" />
+          <annotation name="Annotations" />
+          <rule id="_8F517ECA-1A02-485C-8799-4B28EC0195AD">
+            <inputEntry id="_7FBDB7A0-F5B6-4DAA-9E7A-8E88305DF192">
+              <text>&quot;Non UK&quot;</text>
+            </inputEntry>
+            <outputEntry id="_6D3AD2F7-312D-4716-ADD4-F402B3D8CFA4">
+              <text>[&quot;US&quot;,&quot;CH&quot;, &quot;MX&quot;, &quot;BR&quot;]</text>
+            </outputEntry>
+            <annotationEntry>
+              <text>// Your annotations here</text>
+            </annotationEntry>
+          </rule>
+          <rule id="_8840BB6C-6D82-436C-8F25-74B28B6A9E31">
+            <inputEntry id="_A920C136-D366-4464-A90E-DA5068E957D3">
+              <text>&quot;UK &amp; US&quot;</text>
+            </inputEntry>
+            <outputEntry id="_95CEAD21-4380-45EA-B0DD-1AC954805FB2">
+              <text>[&quot;US&quot;,&quot;UK&quot;]</text>
+            </outputEntry>
+            <annotationEntry>
+              <text></text>
+            </annotationEntry>
+          </rule>
+          <rule id="_41478E95-8B00-4739-BAA8-6F591EE38B37">
+            <inputEntry id="_6B49B389-D21B-41B2-976A-37530DE7F4C8">
+              <text>&quot;Americas&quot;</text>
+            </inputEntry>
+            <outputEntry id="_CD3262E3-3D28-4E0D-9C85-D6F3F5B76B87">
+              <text>[&quot;US&quot;,&quot;MX&quot;,&quot;BR&quot;]</text>
+            </outputEntry>
+            <annotationEntry>
+              <text></text>
+            </annotationEntry>
+          </rule>
+          <rule id="_7E4CCF06-A8B9-4251-A9C1-E53347DE58B2">
+            <inputEntry id="_B6680A72-544F-463F-9413-3D55AFAD7675">
+              <text>&quot;Europe&quot;</text>
+            </inputEntry>
+            <outputEntry id="_B50CD29B-E3FD-468A-96A3-6D12D2D57F24">
+              <text>[&quot;CH&quot;]</text>
+            </outputEntry>
+            <annotationEntry>
+              <text></text>
+            </annotationEntry>
+          </rule>
+        </decisionTable>
+      </contextEntry>
+      <contextEntry id="_6E263E12-492A-4DCE-A752-DC3340CE8827">
+        <literalExpression id="_9B94DF71-88B5-4A66-8ACD-8C87A898868E" typeRef="context" label="dq is applicable for">
+          <text>list contains(location_expanded, location)</text>
+        </literalExpression>
+      </contextEntry>
+    </context>
+  </decision>
+  <inputData name="locations" id="_C8784D2C-723D-4753-AE83-891665D014F8">
+    <variable name="locations" id="_52F5A8FA-4038-434B-8372-223E64912121" typeRef="string" />
+  </inputData>
+  <inputData name="location" id="_D7C64B83-9DB7-454C-9ECF-8018AADD7E58">
+    <variable name="location" id="_5008F448-F414-47EE-9A6F-D965864BD90B" typeRef="string" />
+  </inputData>
+  <inputData name="myVar" id="_DE4BC0FE-8626-43A5-96CC-E62B36D00C7D">
+    <variable name="myVar" id="_810CF54D-C6FB-44EF-A3A7-96F267E5FA66" typeRef="Any" />
+  </inputData>
+  <decision name="isMissing" id="_EDA58933-25D8-4432-A900-43836E3A6B2B">
+    <variable name="isMissing" id="_40B9A971-4E26-4752-9D43-A58F859C2CC5" typeRef="Any" />
+    <informationRequirement id="_30532115-D12C-4869-A17E-C64B4F170A18">
+      <requiredInput href="#_DE4BC0FE-8626-43A5-96CC-E62B36D00C7D" />
+    </informationRequirement>
+    <literalExpression id="_FD1163F1-44CF-45F9-BD5C-1253C3E05DED" typeRef="Any" label="isMissing">
+      <text>if myVar = null then true else matches(string(myVar), &quot;^\s*$&quot;)</text>
+    </literalExpression>
+  </decision>
+  <knowledgeSource name="New Knowledge Source" id="_43AFBF93-29C2-495F-B783-D64AB0E1A76E">
+    <authorityRequirement id="_B156080A-8E4B-47FE-8CD8-D5745CE61067">
+      <requiredDecision href="#_3A672BB8-C0A3-4C8E-988F-E4595772AE02" />
+    </authorityRequirement>
+  </knowledgeSource>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_48462FA5-0B40-4476-BD98-E004EB3D64AD" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="_2C872BBC-EE60-4CBC-B6AD-BE218C90D398">
+            <kie:width>60</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>240</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_1B51E836-B022-45BB-807A-F861E8FC36B5">
+            <kie:width>120</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_2C6870E8-8AC4-422B-AB34-29199B740342">
+            <kie:width>60</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>155</kie:width>
+            <kie:width>240</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_9B94DF71-88B5-4A66-8ACD-8C87A898868E">
+            <kie:width>190</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_41EFFC47-9D9A-4C4B-9670-714B683430AE">
+            <kie:width>120</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_FD1163F1-44CF-45F9-BD5C-1253C3E05DED">
+            <kie:width>190</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_EDE87FA2-AD12-4EFE-B1D3-CDA54257D930" dmnElementRef="_FB91C5E3-6928-4513-90DB-7F0B47212870" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="80" y="20" width="260" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_ECA45B2B-CFB3-4BF1-9A96-EC926F0AE096" dmnElementRef="_3A672BB8-C0A3-4C8E-988F-E4595772AE02" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="480" y="360" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_816BC9DD-9CED-4F6A-B440-72A45E07E0EE" dmnElementRef="_C8784D2C-723D-4753-AE83-891665D014F8" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="320" y="180" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_D09C842F-5E4C-4C19-9791-37AD4FF39F64" dmnElementRef="_DE55E96B-3CC2-4CE7-921D-5F995810A8A3" sourceElement="_816BC9DD-9CED-4F6A-B440-72A45E07E0EE" targetElement="_ECA45B2B-CFB3-4BF1-9A96-EC926F0AE096">
+        <di:waypoint x="400" y="220" />
+        <di:waypoint x="560" y="360" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="_C57C7FB9-C00C-454A-BC1E-CD6F1CA47F48" dmnElementRef="_D7C64B83-9DB7-454C-9ECF-8018AADD7E58" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="500" y="180" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_50319F0B-755C-4F3A-A910-29CFC3229917" dmnElementRef="_69C19496-5157-40E4-AF2F-8435C752BBFC" sourceElement="_C57C7FB9-C00C-454A-BC1E-CD6F1CA47F48" targetElement="_ECA45B2B-CFB3-4BF1-9A96-EC926F0AE096">
+        <di:waypoint x="580" y="220" />
+        <di:waypoint x="560" y="360" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="_2955FB3A-3C95-4DC6-AE36-6407122A988A" dmnElementRef="_DE4BC0FE-8626-43A5-96CC-E62B36D00C7D" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="820" y="220" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_CAB45296-FDA7-4D3A-B002-9C6D5DAAA79F" dmnElementRef="_EDA58933-25D8-4432-A900-43836E3A6B2B" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="820" y="360" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_61DE8D50-0479-43D2-96A4-D3BE774083B7" dmnElementRef="_30532115-D12C-4869-A17E-C64B4F170A18" sourceElement="_2955FB3A-3C95-4DC6-AE36-6407122A988A" targetElement="_CAB45296-FDA7-4D3A-B002-9C6D5DAAA79F">
+        <di:waypoint x="900" y="260" />
+        <di:waypoint x="900" y="360" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="_237F45AC-4809-4A40-A998-1893B866894B" dmnElementRef="_43AFBF93-29C2-495F-B783-D64AB0E1A76E" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="260" y="460" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_FB61F300-7DC4-44DF-9558-0A4CFBF51BED-AUTO-TARGET" dmnElementRef="_B156080A-8E4B-47FE-8CD8-D5745CE61067" sourceElement="_ECA45B2B-CFB3-4BF1-9A96-EC926F0AE096" targetElement="_237F45AC-4809-4A40-A998-1893B866894B">
+        <di:waypoint x="560" y="400" />
+        <di:waypoint x="340" y="500" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

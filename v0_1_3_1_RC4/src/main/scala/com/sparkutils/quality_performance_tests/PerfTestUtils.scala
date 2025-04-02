@@ -4,9 +4,19 @@ import com.sparkutils.qualityTests.TestUtils
 
 object PerfTestUtils extends TestUtils {
 
-  /**
-   * Enable any spark wide optimisations for a given run
-   * @param thunk
-   */
-  def extraPerfOptions(thunk: Unit): Unit = thunk
+  trait ExtraPerfTests extends Bench.OfflineReport with BaseConfig {
+
+    performance of "resultWriting_dmn_and_rc5_specifics" config (
+      exec.minWarmupRuns -> 2,
+      exec.maxWarmupRuns -> 4,
+      exec.benchRuns -> 4,
+      exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
+      exec.jvmflags -> List("-Xmx12g","-Xms12g") // 16GB on github runners
+      //  verbose -> true
+    ) in {
+
+    }
+
+  }
+
 }
