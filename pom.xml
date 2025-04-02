@@ -54,7 +54,7 @@
         <sparkVersion>3.5.5</sparkVersion>
         <sparkCompatVersion>3.5</sparkCompatVersion>
         <shimRuntime>4.0.0.oss</shimRuntime>
-        <jacksonVersion>2.13.5</jacksonVersion>
+        <jacksonVersion>2.15.2</jacksonVersion>
         <scalaMeterVersion>0.0.1</scalaMeterVersion>
 
         <junitVersion>4.12</junitVersion>
@@ -184,7 +184,7 @@
             <version>${sparkVersion}</version>
         </dependency>
 
-
+<!-- can't use Sparks version as it's using 4 different versions -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala_${scalaCompatVersion}</artifactId>
