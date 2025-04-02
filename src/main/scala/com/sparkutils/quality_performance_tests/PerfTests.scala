@@ -105,7 +105,7 @@ object TestData {
 
 object Args {
   val args = List(
-    "-Xmx12g","-Xms12g",// 16GB on github runners
+    "-Xmx10g","-Xms10g",// 16GB on github runners, 12gb sometimes is too much
     "-ea",
     "-XX:+IgnoreUnrecognizedVMOptions",
     "--add-opens=java.base/java.lang=ALL-UNNAMED",
