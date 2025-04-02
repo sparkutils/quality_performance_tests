@@ -4,7 +4,6 @@ import com.sparkutils.quality
 import com.sparkutils.quality._
 import com.sparkutils.qualityTests.TestUtils
 import com.sparkutils.quality_performance_tests.PerfTestUtils.ExtraPerfTests
-import com.sparkutils.quality_performance_tests.PerfTests.sparkSession
 import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, inputsDir}
 import org.apache.spark.sql
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
@@ -75,7 +74,7 @@ object TestData {
   }
 
 
-  def baselineRules(prefix: String) = {
+  def baselineRules(prefix: String)(implicit sparkSession: SparkSession) = {
     import sparkSession.implicits._
 
     // the rules above do 16 rules ( 32 'tests' ), so simulating a struct with a bare bones, no lambdas,
@@ -99,9 +98,9 @@ object TestData {
     )
   }
 
-  val baseline = baselineRules("")
+  def baseline(implicit sparkSession: SparkSession) = baselineRules("")
 
-  val jsonBaseline = baselineRules(s"from_json(payload, $schema).")
+  def jsonBaseline(implicit sparkSession: SparkSession) = baselineRules(s"from_json(payload, $schema).")
 }
 
 object Args {
@@ -128,8 +127,8 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
-  val MAXSIZE = 10000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn
-  val STEP =    10000
+  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn
+  val STEP =    100000
 
   def main(args: Array[String]): Unit = {
 
@@ -147,19 +146,26 @@ object TestSourceData extends TestUtils {
     sparkSession.close()
   }
 }
-object PerfTests extends Bench.Group with TestUtils {
 
-  trait Fwder {
+trait Fwder {
+
+  @transient
+  lazy val utils: TestUtils = new TestUtils {}
+
+  // if this blows then debug on CodeGenerator 1294, 1299 and grab code.body
+  def _forceCodeGen[T](f: => T): T = utils.forceCodeGen(f)
+
+  def _forceInterpreted[T](f: => T): T = utils.forceInterpreted(f)
+
+  def _outputDir: String = utils.outputDir
+
+  def _sparkSession: SparkSession = utils.sparkSession
+}
+
+object PerfTests extends Bench.OfflineReport with PerfTestBase with ExtraPerfTests with Fwder {
 
 
-    // if this blows then debug on CodeGenerator 1294, 1299 and grab code.body
-    def _forceCodeGen[T](f: => T): T = forceCodeGen(f)
-
-    def _forceInterpreted[T](f: => T): T = forceInterpreted(f)
-
-    def _outputDir: String = outputDir
-  }
-
+/*
   performance of "resultWriting" config (
     exec.minWarmupRuns -> 2,
     exec.maxWarmupRuns -> 4,
@@ -184,7 +190,7 @@ object PerfTests extends Bench.Group with TestUtils {
   ) in {
 
     include(new ExtraPerfTests with Fwder)
-  }
+  }*/
 }
 
 trait BaseConfig {
@@ -193,9 +199,11 @@ trait BaseConfig {
 
   def _outputDir: String
 
+  implicit def _sparkSession: SparkSession
+
   // dump the file for the row size into a new copy
   def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    fdf(sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
   }
 
   def dumpTime =
@@ -206,6 +214,8 @@ trait BaseConfig {
   def _forceCodeGen[T](f: => T): T
 
   def _forceInterpreted[T](f: => T): T
+
+  def close(): Unit = _sparkSession.close()
 }
 
 trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
@@ -222,24 +232,24 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
     quality.registerQualityFunctions()
 
     dumpTime
-/*
+
     measure method "copy in codegen" in {
       _forceCodeGen {
-        using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_codegen")
+        using(rows) afterTests {close()} in evaluate(identity, "copy_codegen")
       }
-    }
+    }/*
 
     measure method "copy in interpreted" in {
       _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
-    }
+    }*/
 
     measure method "baseline in codegen" in {
       _forceCodeGen {
-        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
+        using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
-    }
+    }/*
 
     measure method "baseline in interpreted" in {
       _forceInterpreted {
@@ -249,16 +259,16 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
 */
     measure method "json baseline in codegen" in {
       _forceCodeGen {
-        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
+        using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
       }
-    }
+    }/*
 
     measure method "json baseline in interpreted" in {
       _forceInterpreted {
-        using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_interpreted")
+        using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_interpreted")
       }
     }
-    /*
+
 
    // the below aren't really that interesting, they perform well on lower row counts but not on higher counts
 
