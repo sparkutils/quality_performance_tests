@@ -107,8 +107,8 @@ object TestData {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
-  val MAXSIZE = 100000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box
-  val STEP =    100000
+  val MAXSIZE = 2000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box
+  val STEP =    2000000
 
   def main(args: Array[String]): Unit = {
 
