@@ -18,7 +18,7 @@ object PerfTestUtils extends TestUtils {
 
   val kieServices = org.kie.api.KieServices.Factory.get()
   val kieContainer = kieServices.getKieClasspathContainer()
-  val dmnRuntime = org.kie.api.runtime.KieRuntimeFactory.of(kieContainer.getKieBase("rules"))
+  val dmnRuntime = org.kie.api.runtime.KieRuntimeFactory.of(kieContainer.getKieBase())
     .get(classOf[org.kie.dmn.api.core.DMNRuntime])
   
   val withRewrite = testPlan(FunNRewrite, secondRunWithoutPlan = false) _
