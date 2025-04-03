@@ -35,6 +35,22 @@ object PerfTestUtils extends TestUtils {
     // assuming it's quicker than using classes
     val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
 
+    val ctx = dmnRuntime.newContext() //models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
+
+    ctx.set("testData", testData)
+    
+    val res = dmnRuntime.evaluateAll(models, ctx)
+    if (res.getDecisionResults.getFirst.hasErrors)
+      null
+    else
+      res.getDecisionResults.getFirst.getResult.asInstanceOf[util.ArrayList[Boolean]].asScala.toSeq
+  }
+
+  /*
+  val dmnUDF = udf[Seq[Boolean], String] { json =>
+    // assuming it's quicker than using classes
+    val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
+
     val ctx = models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
 
     val res = models.evaluateAll(ctx)
@@ -43,7 +59,7 @@ object PerfTestUtils extends TestUtils {
     else
       res.getDecisionResults.getFirst.getResult.asInstanceOf[util.ArrayList[Boolean]].asScala.toSeq
   }
-
+*/
   def main(args: Array[String]): Unit = {//TestData(location: String, idPrefix: String, id: Int, page: Long, department: String)
     //val testData = Map[String, Any]("location" -> "UK", "idPrefix" -> "prefix", "id" -> 2, "page" -> 1L, "department" -> "marketing").asJava.asInstanceOf[java.util.Map[String, Object]]
     val json =
@@ -54,13 +70,13 @@ object PerfTestUtils extends TestUtils {
         "page": 1,
         "department": "marketing"
         }"""
-    val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
+    /* val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
 
     val ctx = models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
 
     val res = models.evaluateAll(ctx)
 
-    println(res)
+    println(res) */
   }
 
   /**
