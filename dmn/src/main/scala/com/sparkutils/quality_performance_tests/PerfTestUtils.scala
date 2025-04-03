@@ -16,11 +16,15 @@ import scala.collection.JavaConverters._
 
 object PerfTestUtils extends TestUtils {
 
-
+  val kieServices = org.kie.api.KieServices.Factory.get()
+  val kieContainer = kieServices.getKieClasspathContainer()
+  val dmnRuntime = org.kie.api.runtime.KieRuntimeFactory.of(kieContainer.getKieBase())
+    .get(classOf[org.kie.api.core.DMNRuntime])
+  
   val withRewrite = testPlan(FunNRewrite, secondRunWithoutPlan = false) _
 
   val ns = "decisions"
-  val models = new DecisionModels(new Application()).getDecisionModel(ns, ns)
+  val models = dmnRuntime.getModel(ns,ns) //new DecisionModels(new Application()).getDecisionModel(ns, ns)
 
   val mapper = new ObjectMapper()
     .registerModule(new SimpleModule()
