@@ -95,7 +95,7 @@
         <!-- dmn stuff -->
         <kogitoPomVersion>10.0.0</kogitoPomVersion>
         <kogitoPluginVersion>10.0.0</kogitoPluginVersion>
-        <shadedKogitoVersion>0.0.10</shadedKogitoVersion>
+        <shadedKogitoVersion>0.0.11</shadedKogitoVersion>
     </properties>
 <!-- -->
     <repositories>
