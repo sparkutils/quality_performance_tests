@@ -105,7 +105,7 @@ object TestData {
 
 object Args {
   val args = List(
-    "-Xmx10g","-Xms10g",// 16GB on github runners, 12gb sometimes is too much
+    "-Xmx10g","-Xms10g",// 16GB on github runners, 10gb ok on 21 (12 blows), 12gb fine on jdk 8.
     "-ea",
     "-XX:+IgnoreUnrecognizedVMOptions",
     "--add-opens=java.base/java.lang=ALL-UNNAMED",
@@ -127,8 +127,8 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn
-  val STEP =    100000
+  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    1000000
 
   def main(args: Array[String]): Unit = {
 

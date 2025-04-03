@@ -85,13 +85,13 @@ object PerfTestUtils extends TestUtils {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
         }
       }
-
+/*
       measure method "json dmn interpreted" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_interpreted")
         }
       }
-
+*/
       measure method "no forceEval in codegen compile evals false - extra config" in {
         forceCodeGen {
           extraPerfOptions {
