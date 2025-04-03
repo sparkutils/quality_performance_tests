@@ -26,7 +26,7 @@ public class DecisionModelResourcesProvider implements org.kie.kogito.decision.D
             return new java.io.InputStreamReader(stream);
         }
         try {
-            byte[] bytes = sparkutilsKogito.org.drools.util.IoUtils.readBytesFromInputStream(stream);
+            byte[] bytes = org.drools.util.IoUtils.readBytesFromInputStream(stream);
             java.io.ByteArrayInputStream byteArrayInputStream = new java.io.ByteArrayInputStream(bytes);
             return new java.io.InputStreamReader(byteArrayInputStream);
         } catch (java.io.IOException e) {
