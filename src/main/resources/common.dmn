@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="common" id="common" name="common">
   <description>common things</description>
-  <itemDefinition id="_FB776935-97B3-4952-AEDC-6B0382D0EEB2" name="strings" isCollection="true" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+  <itemDefinition id="_FB776935-97B3-4952-AEDC-6B0382D0EEB2" name="strings" isCollection="true">
     <typeRef>string</typeRef>
   </itemDefinition>
   <itemDefinition id="_120D2183-4AAF-4F57-B818-8CB0B150992B" name="TestData" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
@@ -32,11 +32,11 @@
           <variable id="_755C135E-4918-49BE-87D2-101A25E89613" name="locations_expanded" typeRef="strings" />
           <decisionTable id="_C426F0CB-17BE-4A91-B854-E05CA85E3F9A" typeRef="strings" hitPolicy="UNIQUE" label="locations_expanded">
             <input id="_B45B73AA-999F-4A5D-958C-52D12F33D2B3">
-              <inputExpression id="_DD2FC0D9-1CDE-4E8F-BCCE-A3BE6C7E79C2" typeRef="string">
+              <inputExpression typeRef="string">
                 <text>locations</text>
               </inputExpression>
             </input>
-            <output id="_32451C9E-FBCD-4B76-BA90-5B003FC0BF7F" name="Output-1" />
+            <output id="_32451C9E-FBCD-4B76-BA90-5B003FC0BF7F" />
             <annotation name="Annotations" />
             <rule id="_D8FFD09A-78C6-4D58-A5CF-4CBEDE752E2E">
               <inputEntry id="_013FF5A5-BD37-4B28-BEE0-E8B18E3D41D4">
