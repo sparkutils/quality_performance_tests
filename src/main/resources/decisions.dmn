@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:included0="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="decisions" id="_43720B79-E363-4EFF-A334-4F5C5E052DD3" name="decisions">
-  <import id="_502EA86E-F162-47D2-BF89-E85AEC76C045" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF" locationURI="./common.dmn" />
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:included0="common" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="decisions" id="_43720B79-E363-4EFF-A334-4F5C5E052DD3" name="decisions">
+  <import id="_DA152350-4541-47CA-B10C-FB92914A6A8D" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="common" locationURI="common.dmn" />
   <decision name="evaluate" id="_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C">
     <variable name="evaluate" id="_8F01A22B-574F-4596-8AE0-55DC85BC5383" typeRef="context" />
-    <knowledgeRequirement id="_66FA2150-3E7B-4FD1-AE42-2331C3E0FC36">
-      <requiredKnowledge href="#_6FB61A38-B7FE-4C4D-96AF-0E04213677DA" />
+    <informationRequirement id="_79ECAE34-3BE2-4C00-A98E-91ACD350430A">
+      <requiredInput href="#_39E17322-641A-45A9-B634-BD2253DD419A" />
+    </informationRequirement>
+    <knowledgeRequirement id="_B2132048-8F8C-4156-A24C-77B224374320">
+      <requiredKnowledge href="common#_86155CFC-BE4D-4016-B161-D182DD67E11F" />
     </knowledgeRequirement>
-    <knowledgeRequirement id="_E5A0B4F4-21C0-40FA-8644-343A51EAD266">
-      <requiredKnowledge href="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF#_86155CFC-BE4D-4016-B161-D182DD67E11F" />
-    </knowledgeRequirement>
-    <knowledgeRequirement id="_75509FA5-7200-4B41-B44A-6B804721D849">
-      <requiredKnowledge href="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF#_AA35B9A8-1763-497D-9CB8-6155D8017F18" />
+    <knowledgeRequirement id="_A8189994-085C-4213-8625-E598F450E92A">
+      <requiredKnowledge href="common#_AA35B9A8-1763-497D-9CB8-6155D8017F18" />
     </knowledgeRequirement>
     <context id="_530436C4-9814-4931-9B8D-D72FC63CE97D" typeRef="context" label="evaluate">
       <contextEntry id="_BE1AB939-26CE-4BE7-9FB8-E9AE858EFA90">
@@ -24,7 +24,7 @@
           <description></description>
         </variable>
         <literalExpression id="_801BFF09-11B4-42DA-835E-C51592B9BBE2" typeRef="boolean" label="r2">
-          <text>if common.dq is applicable for(&quot;UK &amp; US&quot;, testData.location) and testData.department = &quot;marketing&quot; then true else false</text>
+          <text>common.dq is applicable for(&quot;UK &amp; US&quot;, testData.location) and testData.department = &quot;marketing&quot;</text>
         </literalExpression>
       </contextEntry>
       <contextEntry id="_ABD1BE69-DBA5-492F-A96C-808E95DEF97B">
@@ -138,17 +138,14 @@
       </contextEntry>
     </context>
   </decision>
-  <businessKnowledgeModel name="testData" id="_6FB61A38-B7FE-4C4D-96AF-0E04213677DA">
-    <variable name="testData" id="_32325C4F-5F5F-4892-86C0-A60BD83F3CA6" typeRef="common.TestData" />
-    <encapsulatedLogic label="testData" typeRef="common.TestData" id="_361D1891-134E-4FD8-ABD8-C8F1008DD30E" kind="FEEL">
-      <formalParameter id="_10DB5970-ED95-42CD-86DF-98CB773976C8" name="testData" typeRef="common.TestData" />
-      <functionDefinition id="_F24AC4F8-ACBD-40B6-AEB7-3C2A26627AA6" kind="FEEL" label="Return">
-        <literalExpression id="_22B88BE1-DBA7-4C03-B826-2B47A74E523C" label="Return">
-          <text>testData</text>
-        </literalExpression>
-      </functionDefinition>
-    </encapsulatedLogic>
-  </businessKnowledgeModel>
+  <decisionService name="DQService" id="_D5EE4628-E48B-4A5D-BF28-FD7EA08C4999">
+    <variable name="DQService" id="_606B39A6-93B8-4320-9F8A-92CF5CD4FF2C" typeRef="common.TestData" />
+    <outputDecision href="#_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C" />
+    <inputData href="#_39E17322-641A-45A9-B634-BD2253DD419A" />
+  </decisionService>
+  <inputData name="testData" id="_39E17322-641A-45A9-B634-BD2253DD419A">
+    <variable name="testData" id="_62D14DF0-AA72-4B01-9AC1-B60C24DD7BD4" typeRef="common.TestData" />
+  </inputData>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="_2F1C2A67-7772-4BD5-9C7A-433C7ECF0334" name="Default DRD" useAlternativeInputDataShape="false">
       <di:extension>
@@ -210,34 +207,38 @@
           <kie:ComponentWidths dmnElementRef="_C2E352EF-03EA-46E8-A5CF-6154819D5E69">
             <kie:width>120</kie:width>
           </kie:ComponentWidths>
-          <kie:ComponentWidths dmnElementRef="_22B88BE1-DBA7-4C03-B826-2B47A74E523C">
-            <kie:width>190</kie:width>
-          </kie:ComponentWidths>
         </kie:ComponentsWidthsExtension>
       </di:extension>
       <dmndi:DMNShape id="_121C753E-4CE6-4555-B3CE-552C049EC582" dmnElementRef="_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C" isCollapsed="false" isListedInputData="false">
-        <dc:Bounds x="720" y="340" width="160" height="80" />
+        <dc:Bounds x="1180" y="340" width="160" height="80" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="_8DA4C4A1-EE68-4725-A64B-CE2D07408A49" dmnElementRef="_6FB61A38-B7FE-4C4D-96AF-0E04213677DA" isCollapsed="false" isListedInputData="false">
-        <dc:Bounds x="440" y="500" width="160" height="80" />
+      <dmndi:DMNShape id="_E633C363-B648-484A-BD5E-3428D79D4693" dmnElementRef="included0:_AA35B9A8-1763-497D-9CB8-6155D8017F18">
+        <dc:Bounds x="180" y="200" width="160" height="80" />
       </dmndi:DMNShape>
-      <dmndi:DMNEdge id="_BABB4F98-4546-4565-9B11-207E3508F855" dmnElementRef="_66FA2150-3E7B-4FD1-AE42-2331C3E0FC36" sourceElement="_8DA4C4A1-EE68-4725-A64B-CE2D07408A49" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
-        <di:waypoint x="520" y="540" />
-        <di:waypoint x="800" y="420" />
+      <dmndi:DMNShape id="_5B369CA3-8367-45F4-8D8C-56F29F87ED81" dmnElementRef="included0:_86155CFC-BE4D-4016-B161-D182DD67E11F">
+        <dc:Bounds x="560" y="180" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_85D9B50E-B201-4C15-8DE5-C13D40550926" dmnElementRef="_B2132048-8F8C-4156-A24C-77B224374320" sourceElement="_5B369CA3-8367-45F4-8D8C-56F29F87ED81" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
+        <di:waypoint x="640" y="220" />
+        <di:waypoint x="1260" y="340" />
       </dmndi:DMNEdge>
-      <dmndi:DMNShape id="_300A4145-6044-4095-8313-E75A6194C1DB" dmnElementRef="included0:_AA35B9A8-1763-497D-9CB8-6155D8017F18">
-        <dc:Bounds x="580" y="240" width="160" height="80" />
-      </dmndi:DMNShape>
-      <dmndi:DMNShape id="_43CA1BD1-47B1-4171-98F8-4B1EC3C73668" dmnElementRef="included0:_86155CFC-BE4D-4016-B161-D182DD67E11F">
-        <dc:Bounds x="860" y="160" width="160" height="80" />
-      </dmndi:DMNShape>
-      <dmndi:DMNEdge id="_F1E7DC14-446B-447C-9E39-C0CF36C8E968" dmnElementRef="_E5A0B4F4-21C0-40FA-8644-343A51EAD266" sourceElement="_43CA1BD1-47B1-4171-98F8-4B1EC3C73668" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
-        <di:waypoint x="940" y="200" />
-        <di:waypoint x="800" y="340" />
+      <dmndi:DMNEdge id="_FE71FBB4-3ED1-4D32-B335-E512246F9B9B" dmnElementRef="_A8189994-085C-4213-8625-E598F450E92A" sourceElement="_E633C363-B648-484A-BD5E-3428D79D4693" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
+        <di:waypoint x="260" y="240" />
+        <di:waypoint x="1180" y="380" />
       </dmndi:DMNEdge>
-      <dmndi:DMNEdge id="_F0F43904-A18D-4314-8323-CF51E236AD04" dmnElementRef="_75509FA5-7200-4B41-B44A-6B804721D849" sourceElement="_300A4145-6044-4095-8313-E75A6194C1DB" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
-        <di:waypoint x="660" y="280" />
-        <di:waypoint x="800" y="340" />
+      <dmndi:DMNShape id="_EC9B2B87-92A5-444A-A43F-08081E7DF449" dmnElementRef="_D5EE4628-E48B-4A5D-BF28-FD7EA08C4999" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="1120" y="280" width="320" height="320" />
+        <dmndi:DMNDecisionServiceDividerLine id="_F3742DBE-4600-4CF7-8F0C-05F76AEC639F">
+          <di:waypoint x="1120" y="440" />
+          <di:waypoint x="1440" y="440" />
+        </dmndi:DMNDecisionServiceDividerLine>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_F81A0B54-FE7B-4B34-9E4F-640D016BD9F3" dmnElementRef="_39E17322-641A-45A9-B634-BD2253DD419A" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="740" y="480" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_65B5CF56-58F3-489C-951B-DE65DB7884E6" dmnElementRef="_79ECAE34-3BE2-4C00-A98E-91ACD350430A" sourceElement="_F81A0B54-FE7B-4B34-9E4F-640D016BD9F3" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
+        <di:waypoint x="820" y="520" />
+        <di:waypoint x="1260" y="420" />
       </dmndi:DMNEdge>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>

@@ -10,6 +10,7 @@ import org.kie.dmn.feel.lang.types.impl.ComparablePeriod
 import org.scalameter.api._
 import org.kie.kogito.app._
 import org.kie.kogito.dmn.rest.DMNFEELComparablePeriodSerializer
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.util
 import scala.collection.JavaConverters._
@@ -17,8 +18,11 @@ import scala.collection.JavaConverters._
 object PerfTestUtils extends TestUtils {
 
   val kieServices = org.kie.api.KieServices.Factory.get()
+
   val kieContainer = kieServices.getKieClasspathContainer()
-  val dmnRuntime = org.kie.api.runtime.KieRuntimeFactory.of(kieContainer.getKieBase())
+
+  val dmnRuntime = //kieContainer.newKieSession().getKieRuntime(classOf[org.kie.dmn.api.core.DMNRuntime])
+    org.kie.api.runtime.KieRuntimeFactory.of(kieContainer.getKieBase())
     .get(classOf[org.kie.dmn.api.core.DMNRuntime])
   
   val withRewrite = testPlan(FunNRewrite, secondRunWithoutPlan = false) _
@@ -70,13 +74,23 @@ object PerfTestUtils extends TestUtils {
         "page": 1,
         "department": "marketing"
         }"""
-    /* val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
+    val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
+    /*
+        val ctx = models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
 
-    val ctx = models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
+        val res = models.evaluateAll(ctx)
 
-    val res = models.evaluateAll(ctx)
+        println(res) */
 
-    println(res) */
+    val ctx = dmnRuntime.newContext() //models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
+
+    ctx.set("testData", testData)
+
+    val res = dmnRuntime.evaluateAll(models, ctx)
+    if (res.getDecisionResults.getFirst.hasErrors)
+      null
+    else
+      res.getDecisionResults.getFirst.getResult.asInstanceOf[util.ArrayList[Boolean]].asScala.toSeq
   }
 
   /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://kie.org/dmn/_C8DC6BD6-3F75-458D-AFF4-0B06CA089EAF" id="_BD074D23-9086-495D-AB01-B2E10E196F84" name="DMN_BE29EEFB-95DF-45E2-921A-DE6D356BC1E8">
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="common" id="common" name="common">
+  <description>common things</description>
   <itemDefinition id="_FB776935-97B3-4952-AEDC-6B0382D0EEB2" name="strings" isCollection="true" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
     <typeRef>string</typeRef>
   </itemDefinition>

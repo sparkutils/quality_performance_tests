@@ -92,10 +92,12 @@
         <scalacArg1></scalacArg1>
         <scalacArg2></scalacArg2>
 
-        <!-- dmn stuff -->
+        <!-- dmn stuff  10.0.0 -->
         <kogitoPomVersion>10.0.0</kogitoPomVersion>
         <kogitoPluginVersion>10.0.0</kogitoPluginVersion>
-        <shadedKogitoVersion>0.0.11</shadedKogitoVersion>
+        <shadedKogitoVersion>0.0.12</shadedKogitoVersion>
+
+        <version.org.slf4j>2.0.13</version.org.slf4j>
     </properties>
 <!-- -->
     <repositories>
@@ -239,7 +241,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jacksonVersion}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.org.slf4j}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -250,7 +256,7 @@
             </testResource>
         </testResources>
         <plugins>
-            <!--
+            <!-- -->
             <plugin>
                 <groupId>org.kie.kogito</groupId>
                 <artifactId>kogito-maven-plugin</artifactId>
@@ -258,6 +264,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <onDemand>false</onDemand>
+                    <generateDecisions>true</generateDecisions>
+                    <generatePartial>true</generatePartial>
                 </configuration>
                 <executions>
                     <execution>
@@ -268,7 +276,7 @@
                     </execution>
                 </executions>
             </plugin>
--->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
