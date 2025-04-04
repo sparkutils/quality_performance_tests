@@ -1,10 +1,10 @@
-package org.kie.kogito;
+package sparkutils.kogito;
 
 import org.kie.dmn.core.compiler.*;
 import org.kie.dmn.feel.parser.feel11.profiles.DoCompileFEELProfile;
 
 /**
- * register with a jvm option
+ * register with a jvm option -Dorg.kie.dmn.decisionlogiccompilerfactory=sparkutils.kogito.KieCompilerEnabler
  */
 public class KieCompilerEnabler implements DMNDecisionLogicCompilerFactory {
     public KieCompilerEnabler() {
