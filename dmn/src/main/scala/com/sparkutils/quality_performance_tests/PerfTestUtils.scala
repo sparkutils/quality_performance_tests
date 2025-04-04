@@ -8,6 +8,7 @@ import com.sparkutils.qualityTests.TestUtils
 import org.apache.spark.sql.ShimUtils.{column, expression}
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, UnaryExpression}
+import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.types.{ArrayType, BooleanType, DataType}
 import org.apache.spark.unsafe.types.UTF8String
@@ -86,7 +87,7 @@ object PerfTestUtils extends TestUtils {
           null
         else
           res.getDecisionResults.getFirst.getResult.asInstanceOf[util.ArrayList[Boolean]].toArray
-      out
+      new GenericArrayData(out)
     }
 
     override protected def withNewChildInternal(newChild: Expression): Expression = copy(child = newChild)
