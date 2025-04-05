@@ -232,24 +232,24 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
     quality.registerQualityFunctions()
 
     dumpTime
-
+/*
     measure method "copy in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(identity, "copy_codegen")
       }
-    }/*
+    }*//*
 
     measure method "copy in interpreted" in {
       _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
     }*/
-
+/*
     measure method "baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
-    }/*
+    }*//*
 
     measure method "baseline in interpreted" in {
       _forceInterpreted {

@@ -62,6 +62,9 @@ object PerfTestUtils extends TestUtils {
 
   case class DMNExpression(child: Expression) extends UnaryExpression with CodegenFallback {
 
+    @transient
+    lazy val ctx = dmnRuntime.newContext() // the example pages show context outside of loops, we can re share it for a partition
+
     override def dataType: DataType = ArrayType(BooleanType)
 
     override def nullSafeEval(input: Any): Any = {
@@ -76,8 +79,6 @@ object PerfTestUtils extends TestUtils {
 
       // assuming it's quicker than using classes
       val testData = mapper.readValue(str, classOf[java.util.Map[String, Object]])
-
-      val ctx = dmnRuntime.newContext()
 
       ctx.set("testData", testData)
 
@@ -168,27 +169,27 @@ object PerfTestUtils extends TestUtils {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
         }
       }
-/*
+/**/
       measure method "json dmn codegen" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
         }
       }
-*/
+
 /*
       measure method "json dmn interpreted" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_interpreted")
         }
       }
-*/
+*//*
       measure method "no forceEval in codegen compile evals false - extra config" in {
         forceCodeGen {
           extraPerfOptions {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false_extra_config")
           }
         }
-      }
+      }*/
 /*
       measure method "no forceEval in interpreted compile evals false - extra config" in {
         forceInterpreted {
@@ -197,14 +198,14 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }*/
-
+/*
       measure method "json no forceEval in codegen compile evals false - extra config" in {
         forceCodeGen {
           extraPerfOptions {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
           }
         }
-      }
+      }*/
 /*
       measure method "json no forceEval in interpreted compile evals false - extra config" in {
         forceInterpreted {
