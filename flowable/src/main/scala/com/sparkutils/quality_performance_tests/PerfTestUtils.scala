@@ -12,10 +12,8 @@ import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.types.{ArrayType, BooleanType, DataType}
 import org.apache.spark.unsafe.types.UTF8String
-import org.kie.dmn.feel.lang.types.impl.ComparablePeriod
+import org.flowable.dmn.engine.DmnEngines
 import org.scalameter.api._
-import org.kie.kogito.app._
-import org.kie.kogito.dmn.rest.DMNFEELComparablePeriodSerializer
 import org.slf4j.{Logger, LoggerFactory}
 
 import java.io.{ByteArrayInputStream, InputStreamReader}
@@ -23,23 +21,58 @@ import java.nio.charset.StandardCharsets
 import java.util
 import scala.collection.JavaConverters._
 
+
+
 object PerfTestUtils extends TestUtils {
   // to see startup drools issues the logger is controlled via spark.  trace shows the error about importing is not real, as per https://www.ibm.com/mysupport/s/defect/aCIKe000000CkpOOAS/dt421845?language=en_US
   // as it then later shows: ImportDMNResolverUtil: DMN Model with name=decisions and namespace=decisions successfully imported a DMN with namespace=common name=common locationURI=common.dmn, modelName=null
-  //sparkSession.sparkContext.setLogLevel("trace")
-  val kieServices = org.kie.api.KieServices.Factory.get()
+  sparkSession.sparkContext.setLogLevel("trace")
+  val dmnEngine = DmnEngines.getDefaultDmnEngine
+  val dmnRepo = dmnEngine.getDmnRepositoryService
+  val dmnDeployment = dmnRepo.createDeployment
+  dmnDeployment.addClasspathResource("decisions.dmn")
+  dmnDeployment.deploy()
 
-  val kieContainer = kieServices.getKieClasspathContainer()
-
-  val dmnRuntime = //kieContainer.newKieSession().getKieRuntime(classOf[org.kie.dmn.api.core.DMNRuntime])
-    org.kie.api.runtime.KieRuntimeFactory.of(kieContainer.getKieBase())
-    .get(classOf[org.kie.dmn.api.core.DMNRuntime])
+  val ds = dmnEngine.getDmnDecisionService
+  val decision = dmnRepo.createDecisionQuery().decisionName("evaluate").singleResult()
 
   val withRewrite = testPlan(FunNRewrite, secondRunWithoutPlan = false) _
 
-  val ns = "decisions"
-  val models = dmnRuntime.getModel(ns,ns) //new DecisionModels(new Application()).getDecisionModel(ns, ns)
+  val mapper = new ObjectMapper()
+    .registerModule(new SimpleModule())
+    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 
+  val ns = "decisions"
+  trait ExtraPerfTests extends Bench.OfflineReport with BaseConfig {
+
+  }
+  def main(args: Array[String]): Unit = {
+    //val testData = Map[String, Any]("location" -> "UK", "idPrefix" -> "prefix", "id" -> 2, "page" -> 1L, "department" -> "marketing").asJava.asInstanceOf[java.util.Map[String, Object]]
+    val json =
+      """{
+        "location": "UK",
+        "idPrefix": "prefix",
+        "id": 2,
+        "page": 1,
+        "department": "marketing"
+        }"""
+
+
+    // to see any logs by kogito during running, shows nothing though at debug or trace
+    // sparkSession.sparkContext.setLogLevel("trace")
+    val testData = mapper.readValue(json, classOf[java.util.Map[String, Object]])
+    /*
+        val ctx = models.newContext(Map[String, Any]("testData" -> testData).asJava.asInstanceOf[java.util.Map[String, Object]])
+
+        val res = models.evaluateAll(ctx)
+
+        println(res) */
+
+    val res = ds.createExecuteDecisionBuilder().variable("testData", testData).decisionKey(decision.getKey).executeDecision()
+    println()
+  }
+ // val models = dmnRuntime.getModel(ns,ns) //new DecisionModels(new Application()).getDecisionModel(ns, ns)
+/*
   val mapper = new ObjectMapper()
     .registerModule(new SimpleModule()
       .addSerializer(classOf[ComparablePeriod], new DMNFEELComparablePeriodSerializer()))
@@ -169,13 +202,13 @@ object PerfTestUtils extends TestUtils {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
         }
       }
-/**/
+/*
       measure method "json dmn codegen" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
         }
       }
-
+*/
 /*
       measure method "json dmn interpreted" in {
         forceInterpreted {
@@ -218,5 +251,5 @@ object PerfTestUtils extends TestUtils {
     }
 
   }
-
+*/
 }
