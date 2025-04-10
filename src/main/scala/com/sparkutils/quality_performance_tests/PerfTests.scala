@@ -268,6 +268,9 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
     //  verbose -> true
   ) in {
 
+    // force loading
+    _sparkSession.conf
+
     quality.registerQualityFunctions()
 
     dumpTime
