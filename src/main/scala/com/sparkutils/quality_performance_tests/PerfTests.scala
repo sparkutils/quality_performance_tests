@@ -165,7 +165,7 @@ object Args {
 
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
-
+  // 4 cores on github runners
   val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
   val STEP =    100000
 
@@ -173,6 +173,8 @@ object TestSourceData extends TestUtils {
 
     def setup(params: (Int)): Unit = {
       TestData.setup(params, sparkSession).write.mode(SaveMode.Overwrite).parquet(inputsDir + s"/testInputData_${params}_rows")
+      val n = sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows").rdd.getNumPartitions
+      println(s"wrote $n partitions")
     }
 
     for{
