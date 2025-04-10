@@ -34,7 +34,7 @@ object PerfTestUtils extends TestUtils {
   dmnDeployment.deploy()
 
   val ds = dmnEngine.getDmnDecisionService
-  val decision = dmnRepo.createDecisionQuery().decisionName("evaluate").singleResult()
+  val decision = dmnRepo.createDecisionQuery().decisionName("DQService").singleResult()
 
   val withRewrite = testPlan(FunNRewrite, secondRunWithoutPlan = false) _
 
@@ -68,8 +68,8 @@ object PerfTestUtils extends TestUtils {
 
         println(res) */
 
-    val res = ds.createExecuteDecisionBuilder().variable("testData", testData).decisionKey(decision.getKey).executeDecision()
-    println()
+    val res = ds.createExecuteDecisionBuilder().variable("testData", testData).decisionKey(decision.getKey).executeDecisionService()
+    println(res)
   }
  // val models = dmnRuntime.getModel(ns,ns) //new DecisionModels(new Application()).getDecisionModel(ns, ns)
 /*
