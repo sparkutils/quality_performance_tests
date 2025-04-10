@@ -98,11 +98,11 @@ object TestData {
   def baselineAudit(prefix: String)(implicit sparkSession: SparkSession) = {
     import sparkSession.implicits._
 
-    sql.functions.named_struct(
+    sql.functions.struct(
       sql.functions.array_contains($"rr", sql.functions.lit(false)).as("overallResult"),
       sql.functions.map(
         sql.functions.lit(1L).as("setId"),
-        sql.functions.named_struct(
+        sql.functions.struct(
           sql.functions.array_contains($"rr", sql.functions.lit(false)).as("setResult"),
           sql.functions.map(
             baselineRulesStrings(prefix).indices.flatMap(i => Seq(
@@ -286,17 +286,17 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
     }*/
-
-    measure method "baseline in codegen" in {
-      _forceCodeGen {
-        using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
-      }
-    }
     measure method "audit baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {
           close()
         } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+      }
+    }
+
+    measure method "baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
     }
     /*
