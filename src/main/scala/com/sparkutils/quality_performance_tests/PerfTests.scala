@@ -73,8 +73,47 @@ object TestData {
     r.copy(lambdaFunctions = r.lambdaFunctions :+ LambdaFunction("jPayload", s"from_json(payload, $schema)", Id(7,1)))
   }
 
+  def baselineRulesStrings(prefix: String)(implicit sparkSession: SparkSession) =
+    Seq(  s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'sales'",
+      s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'marketing'",
+      s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'hr'",
+      s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'it'",
+      s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'ops'",
+      s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'marketing'",
+      s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'hr'",
+      s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'it'",
+      s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'sales'",
+      s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'sales'",
+      s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'it'",
+      s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'sales'",
+      s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'marketing'",
+      s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'hr'",
+      s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'hr'",
+    )
 
-  def baselineRules(prefix: String)(implicit sparkSession: SparkSession) = {
+
+  def baselineRules(prefix: String)(implicit sparkSession: SparkSession) =
+    sql.functions.array( baselineRulesStrings(prefix).map(sql.functions.expr) :_* )
+
+  def baselineAudit(prefix: String)(implicit sparkSession: SparkSession) = {
+    import sparkSession.implicits._
+
+    sql.functions.named_struct(
+      sql.functions.array_contains($"rr", sql.functions.lit(false)).as("overallResult"),
+      sql.functions.map(
+        sql.functions.lit(1L).as("setId"),
+        sql.functions.named_struct(
+          sql.functions.array_contains($"rr", sql.functions.lit(false)).as("setResult"),
+          sql.functions.map(
+            baselineRulesStrings(prefix).indices.flatMap(i => Seq(
+              sql.functions.lit(i.toLong).as("ruleId"),
+              sql.functions.get($"rr",sql.functions.lit(i + 1)).as("result")
+            )) :_*
+          ).as("rules")
+      )).as("ruleSets"))
+  }
+
+  def baselineRulesf(prefix: String)(implicit sparkSession: SparkSession) = {
     import sparkSession.implicits._
 
     // the rules above do 16 rules ( 32 'tests' ), so simulating a struct with a bare bones, no lambdas,
@@ -128,7 +167,7 @@ object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
 
   val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    1000000
+  val STEP =    100000
 
   def main(args: Array[String]): Unit = {
 
@@ -244,24 +283,32 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
     }*/
-/*
+
     measure method "baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
-    }*//*
+    }
+    measure method "audit baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+      }
+    }
+    /*
 
     measure method "baseline in interpreted" in {
       _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
       }
     }
-*/
+*//*
     measure method "json baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
       }
-    }/*
+    }*//*
 
     measure method "json baseline in interpreted" in {
       _forceInterpreted {
