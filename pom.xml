@@ -57,6 +57,13 @@
                 <profileDir>flowable</profileDir>
             </properties>
         </profile>
+        <profile>
+            <id>camunda</id>
+            <properties>
+                <qualityVersion>0.1.3.1-RC5-SNAPSHOT</qualityVersion>
+                <profileDir>camunda</profileDir>
+            </properties>
+        </profile>
     </profiles>
     <properties>
 
@@ -108,6 +115,8 @@
 
         <flowableVersion>7.1.0</flowableVersion>
         <h2Version>2.1.214</h2Version>
+
+        <camundaVersion>1.10.1</camundaVersion>
     </properties>
 <!--
     <repositories>
@@ -160,7 +169,11 @@
             <artifactId>flowable-dmn-engine</artifactId>
             <version>${flowableVersion}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.camunda.bpm.extension.dmn.scala</groupId>
+            <artifactId>dmn-engine</artifactId>
+            <version>${camundaVersion}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
