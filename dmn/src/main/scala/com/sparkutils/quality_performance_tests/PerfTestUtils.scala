@@ -205,14 +205,24 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }*/
-/*
+/* */
       measure method "json no forceEval in codegen compile evals false - extra config" in {
         forceCodeGen {
           extraPerfOptions {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
           }
         }
-      }*/
+      }
+
+      measure method "count json no forceEval in codegen compile evals false - extra config" in {
+        forceCodeGen {
+          extraPerfOptions {
+            using(rows) afterTests {
+              close()
+            } in evaluateWithCount(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
+          }
+        }
+      }
 /*
       measure method "json no forceEval in interpreted compile evals false - extra config" in {
         forceInterpreted {

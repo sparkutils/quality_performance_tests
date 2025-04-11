@@ -329,12 +329,21 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
       }
     }
-*//*
+*/
     measure method "json baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
       }
-    }*//*
+    }
+
+    measure method "count json baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCount(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
+      }
+    }
+    /*
 
     measure method "json baseline in interpreted" in {
       _forceInterpreted {
