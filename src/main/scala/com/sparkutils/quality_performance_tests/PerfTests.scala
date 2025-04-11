@@ -6,7 +6,7 @@ import com.sparkutils.qualityTests.TestUtils
 import com.sparkutils.quality_performance_tests.PerfTestUtils.ExtraPerfTests
 import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, inputsDir}
 import org.apache.spark.sql
-import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, SaveMode, SparkSession}
 import org.scalameter.api._
 
 case class TestData(location: String, idPrefix: String, id: Int, page: Long, department: String)
@@ -95,46 +95,21 @@ object TestData {
   def baselineRules(prefix: String)(implicit sparkSession: SparkSession) =
     sql.functions.array( baselineRulesStrings(prefix).map(sql.functions.expr) :_* )
 
-  def baselineAudit(prefix: String)(implicit sparkSession: SparkSession) = {
-    import sparkSession.implicits._
+  def baselineAudit(col: Column)(implicit sparkSession: SparkSession) = {
 
     sql.functions.struct(
-      sql.functions.array_contains($"rr", sql.functions.lit(false)).as("overallResult"),
+      sql.functions.array_contains(col, sql.functions.lit(false)).as("overallResult"),
       sql.functions.map(
         sql.functions.lit(1L).as("setId"),
         sql.functions.struct(
-          sql.functions.array_contains($"rr", sql.functions.lit(false)).as("setResult"),
+          sql.functions.array_contains(col, sql.functions.lit(false)).as("setResult"),
           sql.functions.map(
-            baselineRulesStrings(prefix).indices.flatMap(i => Seq(
+            baselineRulesStrings("").indices.flatMap(i => Seq(
               sql.functions.lit(i.toLong).as("ruleId"),
-              sql.functions.get($"rr",sql.functions.lit(i + 1)).as("result")
+              sql.functions.get(col, sql.functions.lit(i + 1)).as("result")
             )) :_*
           ).as("rules")
       )).as("ruleSets"))
-  }
-
-  def baselineRulesf(prefix: String)(implicit sparkSession: SparkSession) = {
-    import sparkSession.implicits._
-
-    // the rules above do 16 rules ( 32 'tests' ), so simulating a struct with a bare bones, no lambdas,
-    // showing the typical overhead of Quality usage itself (result management, additional overhead of object creation etc.)
-    sql.functions.struct(
-      sql.functions.expr(s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'sales'"),
-      sql.functions.expr(s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'marketing'"),
-      sql.functions.expr(s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'hr'"),
-      sql.functions.expr(s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'it'"),
-      sql.functions.expr(s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'ops'"),
-      sql.functions.expr(s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'marketing'"),
-      sql.functions.expr(s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'hr'"),
-      sql.functions.expr(s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'it'"),
-      sql.functions.expr(s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'sales'"),
-      sql.functions.expr(s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'sales'"),
-      sql.functions.expr(s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'it'"),
-      sql.functions.expr(s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'sales'"),
-      sql.functions.expr(s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'marketing'"),
-      sql.functions.expr(s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'hr'"),
-      sql.functions.expr(s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'hr'"),
-    )
   }
 
   def baseline(implicit sparkSession: SparkSession) = baselineRules("")
@@ -205,33 +180,6 @@ trait Fwder {
 
 object PerfTests extends Bench.OfflineReport with PerfTestBase with ExtraPerfTests with Fwder {
 
-
-/*
-  performance of "resultWriting" config (
-    exec.minWarmupRuns -> 2,
-    exec.maxWarmupRuns -> 4,
-    exec.benchRuns -> 4,
-    exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
-    exec.jvmflags -> Args.args,
-    reports.resultDir -> "target/benchmarks/default"
-    //  verbose -> true
-  ) in {
-
-    include(new PerfTestBase with Fwder)
-  }
-
-  performance of "resultWriting" config (
-    exec.minWarmupRuns -> 2,
-    exec.maxWarmupRuns -> 4,
-    exec.benchRuns -> 4,
-    exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
-    exec.jvmflags -> Args.args, // 16GB on github runners
-    reports.resultDir -> "target/benchmarks/profileSpecific"
-    //  verbose -> true
-  ) in {
-
-    include(new ExtraPerfTests with Fwder)
-  }*/
 }
 
 trait BaseConfig {
@@ -299,11 +247,25 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
     }*/
-    measure method "audit baseline in codegen" in {
+    measure method "audit baseline in codegen - interim projection" in {
+      val spark = _sparkSession
+      import spark.implicits._
+
       _forceCodeGen {
         using(rows) afterTests {
           close()
-        } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+        } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit($"rr")), "audit_baseline_codegen")
+      }
+    }
+
+    measure method "audit baseline in codegen" in {
+      val spark = _sparkSession
+      import spark.implicits._
+
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
     }
 
@@ -321,14 +283,26 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
       }
     }
 
-    measure method "count audit baseline in codegen" in {
+    measure method "count audit baseline in codegen - interim projection" in {
+      val spark = _sparkSession
+      import spark.implicits._
+
       _forceCodeGen {
         using(rows) afterTests {
           close()
-        } in evaluateWithCacheCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+        } in evaluateWithCacheCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit($"rr")), "audit_baseline_codegen")
       }
     }
+    measure method "count audit baseline in codegen" in {
+      val spark = _sparkSession
+      import spark.implicits._
 
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCacheCount(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
+      }
+    }
 
     measure method "cache count baseline in codegen" in {
       _forceCodeGen {
@@ -338,11 +312,25 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
       }
     }
 
-    measure method "cache count audit baseline in codegen" in {
+    measure method "cache count audit baseline in codegen - interim projection" in {
+      val spark = _sparkSession
+      import spark.implicits._
+
       _forceCodeGen {
         using(rows) afterTests {
           close()
-        } in evaluateWithCacheCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+        } in evaluateWithCacheCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit($"rr")), "audit_baseline_codegen")
+      }
+    }
+
+    measure method "cache count audit baseline in codegen" in {
+      val spark = _sparkSession
+      import spark.implicits._
+
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCacheCount(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
     }
     /*
