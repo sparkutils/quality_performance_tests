@@ -183,6 +183,13 @@ object PerfTestUtils extends TestUtils {
         }
       }
 
+      measure method "cache count json dmn codegen" in {
+        forceCodeGen {
+          using(rows) afterTests {
+            close()
+          } in evaluateWithCacheCount(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
+        }
+      }
       /*
       measure method "json dmn interpreted" in {
         forceInterpreted {
@@ -220,6 +227,16 @@ object PerfTestUtils extends TestUtils {
             using(rows) afterTests {
               close()
             } in evaluateWithCount(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
+          }
+        }
+      }
+
+      measure method "cache count json no forceEval in codegen compile evals false - extra config" in {
+        forceCodeGen {
+          extraPerfOptions {
+            using(rows) afterTests {
+              close()
+            } in evaluateWithCacheCount(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
           }
         }
       }

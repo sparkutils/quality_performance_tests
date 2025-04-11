@@ -252,6 +252,12 @@ trait BaseConfig {
     fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).count
   }
 
+  // show behaviour of a .cache first
+  def evaluateWithCacheCount(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
+    val d = fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).cache
+    d.count
+  }
+
   def dumpTime =
     println("Time is " + java.time.LocalTime.now())
 
@@ -319,7 +325,24 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
       _forceCodeGen {
         using(rows) afterTests {
           close()
-        } in evaluateWithCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+        } in evaluateWithCacheCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
+      }
+    }
+
+
+    measure method "cache count baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCacheCount(_.withColumn("quality", TestData.baseline), "baseline_codegen")
+      }
+    }
+
+    measure method "cache count audit baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCacheCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
       }
     }
     /*
