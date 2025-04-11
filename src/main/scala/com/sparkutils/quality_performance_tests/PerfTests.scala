@@ -247,6 +247,11 @@ trait BaseConfig {
     fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
   }
 
+  // show counts do not do much
+  def evaluateWithCount(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
+    fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).count
+  }
+
   def dumpTime =
     println("Time is " + java.time.LocalTime.now())
 
@@ -299,6 +304,22 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
     measure method "baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
+      }
+    }
+
+    measure method "count baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCount(_.withColumn("quality", TestData.baseline), "baseline_codegen")
+      }
+    }
+
+    measure method "count audit baseline in codegen" in {
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluateWithCount(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit("")), "audit_baseline_codegen")
       }
     }
     /*

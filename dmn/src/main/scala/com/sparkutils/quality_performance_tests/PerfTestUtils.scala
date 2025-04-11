@@ -164,19 +164,26 @@ object PerfTestUtils extends TestUtils {
       quality.registerQualityFunctions()
 
       // expression is 1% faster over 1m with no compilation so the udf isn't run
-      measure method "json dmn codegen - expression" in {
-        forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
-        }
-      }
-/**/
+      /*      measure method "json dmn codegen - expression" in {
+              forceCodeGen {
+                using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
+              }
+            }
+      */
       measure method "json dmn codegen" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
         }
       }
+      measure method "count json dmn codegen" in {
+        forceCodeGen {
+          using(rows) afterTests {
+            close()
+          } in evaluateWithCount(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
+        }
+      }
 
-/*
+      /*
       measure method "json dmn interpreted" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_interpreted")
