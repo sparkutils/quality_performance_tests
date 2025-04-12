@@ -24,7 +24,7 @@ object PerfTestUtils extends TestUtils {
       exec.maxWarmupRuns -> 4,
       exec.benchRuns -> 4,
       exec.jvmcmd -> (System.getProperty("java.home")+"/bin/java"),
-      exec.jvmflags -> List("-Xmx12g","-Xms12g") // 16GB on github runners
+      exec.jvmflags -> Args.args // 16GB on github runners
       //  verbose -> true
     ) in {
 
@@ -37,31 +37,31 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }
+      /*
+            measure method "no forceEval in interpreted compile evals false - extra config" in {
+              _forceInterpreted {
+                extraPerfOptions {
+                  using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config")
+                }
+              }
+            }*/
+      /*
+            measure method "json no forceEval in codegen compile evals false - extra config" in {
+              _forceCodeGen {
+                extraPerfOptions {
+                  using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
+                }
+              }
+            }
 
-      measure method "no forceEval in interpreted compile evals false - extra config" in {
-        _forceInterpreted {
-          extraPerfOptions {
-            using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config")
-          }
-        }
-      }
-
-      measure method "json no forceEval in codegen compile evals false - extra config" in {
-        _forceCodeGen {
-          extraPerfOptions {
-            using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
-          }
-        }
-      }
-
-      measure method "json no forceEval in interpreted compile evals false - extra config" in {
-        _forceInterpreted {
-          extraPerfOptions {
-            using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_interpreted_compile_evals_false_extra_config")
-          }
-        }
-      }
-
+            measure method "json no forceEval in interpreted compile evals false - extra config" in {
+              _forceInterpreted {
+                extraPerfOptions {
+                  using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_interpreted_compile_evals_false_extra_config")
+                }
+              }
+            }
+      */
     }
 
   }

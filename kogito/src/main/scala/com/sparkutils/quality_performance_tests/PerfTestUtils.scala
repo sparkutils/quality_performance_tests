@@ -164,19 +164,42 @@ object PerfTestUtils extends TestUtils {
       quality.registerQualityFunctions()
 
       // expression is 1% faster over 1m with no compilation so the udf isn't run
-      measure method "json dmn codegen - expression" in {
+/*      measure method "json dmn codegen - expression" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
         }
       }
-/*
+*/
+      /*      measure method "json dmn codegen - expression" in {
+              forceCodeGen {
+                using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
+              }
+            }
+      */
+
       measure method "json dmn codegen" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
         }
       }
-*/
-/*
+
+      measure method "count json dmn codegen" in {
+        forceCodeGen {
+          using(rows) afterTests {
+            close()
+          } in evaluateWithCount(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
+        }
+      }
+
+      measure method "cache count json dmn codegen" in {
+        forceCodeGen {
+          using(rows) afterTests {
+            close()
+          } in evaluateWithCacheCount(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
+        }
+      }
+      /*
+
       measure method "json dmn interpreted" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_interpreted")
@@ -198,14 +221,34 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }*/
-/*
+/* */
       measure method "json no forceEval in codegen compile evals false - extra config" in {
         forceCodeGen {
           extraPerfOptions {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
           }
         }
-      }*/
+      }
+
+      measure method "count json no forceEval in codegen compile evals false - extra config" in {
+        forceCodeGen {
+          extraPerfOptions {
+            using(rows) afterTests {
+              close()
+            } in evaluateWithCount(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
+          }
+        }
+      }
+
+      measure method "cache count json no forceEval in codegen compile evals false - extra config" in {
+        forceCodeGen {
+          extraPerfOptions {
+            using(rows) afterTests {
+              close()
+            } in evaluateWithCacheCount(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
+          }
+        }
+      }
 /*
       measure method "json no forceEval in interpreted compile evals false - extra config" in {
         forceInterpreted {
