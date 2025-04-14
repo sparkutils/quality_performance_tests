@@ -5,6 +5,9 @@ import com.sparkutils.quality
 import com.sparkutils.quality.impl.extension.FunNRewrite
 import com.sparkutils.quality.ruleRunner
 import com.sparkutils.qualityTests.TestUtils
+import org.apache.log4j.{Level, LogManager}
+import org.apache.logging.log4j.core.LoggerContext
+import org.apache.logging.log4j.core.config.LoggerConfig
 import org.apache.spark.sql.ShimUtils.{column, expression}
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, UnaryExpression}
@@ -25,6 +28,12 @@ import java.util
 import scala.collection.JavaConverters._
 
 object PerfTestUtils extends TestUtils {
+  {
+    // disable spurious error when dyn loading, happens once or twice when using scaffolding as well
+    val ctx = LogManager.getLogger("org.kie.dmn.core.compiler.ImportDMNResolverUtil")
+    ctx.setLevel(Level.OFF)
+  }
+
   // to see startup drools issues the logger is controlled via spark.  trace shows the error about importing is not real, as per https://www.ibm.com/mysupport/s/defect/aCIKe000000CkpOOAS/dt421845?language=en_US
   // as it then later shows: ImportDMNResolverUtil: DMN Model with name=decisions and namespace=decisions successfully imported a DMN with namespace=common name=common locationURI=common.dmn, modelName=null
   //sparkSession.sparkContext.setLogLevel("trace")
@@ -76,16 +85,16 @@ object PerfTestUtils extends TestUtils {
     override def nullSafeEval(input: Any): Any = {
       val i = input.asInstanceOf[UTF8String]
       val bb = i.getByteBuffer // handles the size of issues
-  /*    assert(bb.hasArray)
+      assert(bb.hasArray)
 
       val bain = new ByteArrayInputStream(
         bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())
 
       val str = new InputStreamReader(bain, StandardCharsets.UTF_8)
-*/
+
       // assuming it's quicker than using classes
-      val testData = mapper.readValue(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining(), classOf[java.util.Map[String, Object]])
-        //mapper.readValue(str, classOf[java.util.Map[String, Object]])
+      val testData = // bytes is a couple of percents slower mapper.readValue(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining(), classOf[java.util.Map[String, Object]])
+        mapper.readValue(str, classOf[java.util.Map[String, Object]])
 
       ctx.set(model.contextTypeName, testData)
 
