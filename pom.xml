@@ -109,7 +109,7 @@
         <flowableVersion>7.1.0</flowableVersion>
         <h2Version>2.1.214</h2Version>
     </properties>
-<!--
+<!-- -->
     <repositories>
         <repository>
             <id>ossrh_snap</id>
@@ -117,7 +117,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
--->
+
     <distributionManagement>
         <repository>
             <id>ossrh</id>
