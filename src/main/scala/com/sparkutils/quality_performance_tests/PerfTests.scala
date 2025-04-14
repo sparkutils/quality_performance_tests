@@ -8,6 +8,7 @@ import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, i
 import org.apache.spark.sql
 import org.apache.spark.sql.{Column, DataFrame, SaveMode, SparkSession}
 import org.scalameter.api._
+import org.scalameter.picklers.noPickler.instance
 
 case class TestData(location: String, idPrefix: String, id: Int, page: Long, department: String)
 
@@ -141,8 +142,8 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    1000000
+  val MAXSIZE = 10000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    10000
 
   def main(args: Array[String]): Unit = {
 
@@ -178,7 +179,11 @@ trait Fwder {
   def _sparkSession: SparkSession = utils.sparkSession
 }
 
-object PerfTests extends Bench.OfflineReport with PerfTestBase with ExtraPerfTests with Fwder {
+object TestTypes {
+  type TheRunner = Bench.LocalTime///Bench.OfflineReport
+}
+
+object PerfTests extends TestTypes.TheRunner with PerfTestBase with ExtraPerfTests with Fwder {
 
 }
 
@@ -218,7 +223,7 @@ trait BaseConfig {
   def close(): Unit = _sparkSession.close()
 }
 
-trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
+trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
 
   performance of "resultWriting" config (
     exec.minWarmupRuns -> 2,
@@ -246,7 +251,7 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
       _forceInterpreted {
         using(rows) afterTests {sparkSession.close()} in evaluate(identity, "copy_interpreted")
       }
-    }*/
+    }*//*
     measure method "audit baseline in codegen - interim projection" in {
       val spark = _sparkSession
       import spark.implicits._
@@ -332,7 +337,7 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
           close()
         } in evaluateWithCacheCount(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
-    }
+    }*/
     /*
 
     measure method "baseline in interpreted" in {
@@ -341,6 +346,17 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
       }
     }
 */
+    measure method "json audit baseline in codegen" in {
+      val spark = _sparkSession
+      import spark.implicits._
+
+      _forceCodeGen {
+        using(rows) afterTests {
+          close()
+        } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.jsonBaseline)), "json_audit_baseline_codegen")
+      }
+    }
+    /*
     measure method "json baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
@@ -353,7 +369,7 @@ trait PerfTestBase extends Bench.OfflineReport with BaseConfig {
           close()
         } in evaluateWithCount(_.withColumn("quality", TestData.jsonBaseline), "json_baseline_codegen")
       }
-    }
+    }*/
     /*
 
     measure method "json baseline in interpreted" in {

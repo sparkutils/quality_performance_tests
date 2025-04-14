@@ -4,7 +4,7 @@ import com.sparkutils.qualityTests.TestUtils
 
 object PerfTestUtils extends TestUtils {
 
-  trait ExtraPerfTests extends Bench.OfflineReport with BaseConfig {
+  trait ExtraPerfTests extends TestTypes.TheRunner with BaseConfig {
 
     performance of "resultWriting_dmn_and_rc5_specifics" config (
       exec.minWarmupRuns -> 2,

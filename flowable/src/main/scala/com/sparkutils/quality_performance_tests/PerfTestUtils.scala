@@ -43,7 +43,7 @@ object PerfTestUtils extends TestUtils {
     .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 
   val ns = "decisions"
-  trait ExtraPerfTests extends Bench.OfflineReport with BaseConfig {
+  trait ExtraPerfTests extends  TestTypes.TheRunner  with BaseConfig {
 
   }
   def main(args: Array[String]): Unit = {

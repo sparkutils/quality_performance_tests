@@ -17,7 +17,7 @@ object PerfTestUtils extends TestUtils {
   def extraPerfOptions(thunk: Unit): Unit =
     withRewrite(thunk)
 
-  trait ExtraPerfTests extends Bench.OfflineReport with BaseConfig {
+  trait ExtraPerfTests extends TestTypes.TheRunner with BaseConfig {
 
     performance of "resultWriting_rc5_specifics" config (
       exec.minWarmupRuns -> 2,
