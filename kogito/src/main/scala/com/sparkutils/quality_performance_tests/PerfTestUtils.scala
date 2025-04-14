@@ -75,16 +75,17 @@ object PerfTestUtils extends TestUtils {
 
     override def nullSafeEval(input: Any): Any = {
       val i = input.asInstanceOf[UTF8String]
-      val bb = i.getByteBuffer
-      assert(bb.hasArray)
+      val bb = i.getByteBuffer // handles the size of issues
+  /*    assert(bb.hasArray)
 
       val bain = new ByteArrayInputStream(
         bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())
 
       val str = new InputStreamReader(bain, StandardCharsets.UTF_8)
-
+*/
       // assuming it's quicker than using classes
-      val testData = mapper.readValue(str, classOf[java.util.Map[String, Object]])
+      val testData = mapper.readValue(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining(), classOf[java.util.Map[String, Object]])
+        //mapper.readValue(str, classOf[java.util.Map[String, Object]])
 
       ctx.set(model.contextTypeName, testData)
 
