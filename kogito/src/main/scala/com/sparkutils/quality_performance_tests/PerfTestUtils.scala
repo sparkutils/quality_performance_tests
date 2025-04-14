@@ -8,21 +8,18 @@ import com.sparkutils.qualityTests.TestUtils
 import org.apache.spark.sql.ShimUtils.{column, expression}
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, UnaryExpression}
-import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
+import org.apache.spark.sql.catalyst.util.GenericArrayData
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.types.{ArrayType, BooleanType, DataType}
 import org.apache.spark.unsafe.types.UTF8String
 import org.kie.dmn.core.internal.utils.DMNRuntimeBuilder
-import org.kie.dmn.core.internal.utils.DMNRuntimeBuilder.RelativeImportResolver
 import org.kie.dmn.feel.lang.types.impl.ComparablePeriod
 import org.kie.internal.io.ResourceFactory
 import org.scalameter.api._
-import org.kie.kogito.app._
-import org.kie.kogito.dmn.DMNKogito
 import org.kie.kogito.dmn.rest.DMNFEELComparablePeriodSerializer
 import org.slf4j.{Logger, LoggerFactory}
 
-import java.io.{ByteArrayInputStream, InputStreamReader, Reader}
+import java.io.{ByteArrayInputStream, InputStreamReader}
 import java.nio.charset.StandardCharsets
 import java.util
 import scala.collection.JavaConverters._
