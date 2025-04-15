@@ -41,33 +41,45 @@ object TestData {
     Seq(
       RuleSet(Id(1,1),
         Seq(
-          Rule(Id(1,1), ExpressionRule(s"`dq is applicable for`(`Non UK`()) and ${prefix}department = 'sales'")),
-          Rule(Id(2,1), ExpressionRule(s"`dq is applicable for`(`UK & US`()) and ${prefix}department = 'marketing'")),
-          Rule(Id(3,1), ExpressionRule(s"`dq is applicable for`(`Americas`()) and ${prefix}department = 'hr'")),
-          Rule(Id(4,1), ExpressionRule(s"`dq is applicable for`(`Europe`()) and ${prefix}department = 'it'")),
+          Rule(Id(1,1), ExpressionRule(s"`dq is applicable for`('Non UK') and ${prefix}department = 'sales'")),
+          Rule(Id(2,1), ExpressionRule(s"`dq is applicable for`('UK & US') and ${prefix}department = 'marketing'")),
+          Rule(Id(3,1), ExpressionRule(s"`dq is applicable for`('Americas') and ${prefix}department = 'hr'")),
+          Rule(Id(4,1), ExpressionRule(s"`dq is applicable for`('Europe') and ${prefix}department = 'it'")),
           Rule(Id(5,1), ExpressionRule(s"`isMissing`(${prefix}id) and ${prefix}department = 'ops'")),
-          Rule(Id(6,1), ExpressionRule(s"`dq is applicable for`(`Non UK`()) and ${prefix}department = 'marketing'")),
-          Rule(Id(7,1), ExpressionRule(s"`dq is applicable for`(`UK & US`()) and ${prefix}department= 'hr'")),
-          Rule(Id(8,1), ExpressionRule(s"`dq is applicable for`(`Americas`()) and ${prefix}department = 'it'")),
-          Rule(Id(9,1), ExpressionRule(s"`dq is applicable for`(`Europe`()) and ${prefix}department = 'sales'")),
+          Rule(Id(6,1), ExpressionRule(s"`dq is applicable for`('Non UK') and ${prefix}department = 'marketing'")),
+          Rule(Id(7,1), ExpressionRule(s"`dq is applicable for`('UK & US') and ${prefix}department= 'hr'")),
+          Rule(Id(8,1), ExpressionRule(s"`dq is applicable for`('Americas') and ${prefix}department = 'it'")),
+          Rule(Id(9,1), ExpressionRule(s"`dq is applicable for`('Europe') and ${prefix}department = 'sales'")),
           Rule(Id(10,1), ExpressionRule(s"`isMissing`(${prefix}id) and ${prefix}department = 'sales'")),
-          Rule(Id(11,1), ExpressionRule(s"`dq is applicable for`(`Non UK`()) and ${prefix}department = 'it'")),
-          Rule(Id(12,1), ExpressionRule(s"`dq is applicable for`(`UK & US`()) and ${prefix}department = 'sales'")),
-          Rule(Id(13,1), ExpressionRule(s"`dq is applicable for`(`Americas`()) and ${prefix}department = 'marketing'")),
-          Rule(Id(14,1), ExpressionRule(s"`dq is applicable for`(`Europe`()) and ${prefix}department = 'hr'")),
+          Rule(Id(11,1), ExpressionRule(s"`dq is applicable for`('Non UK') and ${prefix}department = 'it'")),
+          Rule(Id(12,1), ExpressionRule(s"`dq is applicable for`('UK & US') and ${prefix}department = 'sales'")),
+          Rule(Id(13,1), ExpressionRule(s"`dq is applicable for`('Americas') and ${prefix}department = 'marketing'")),
+          Rule(Id(14,1), ExpressionRule(s"`dq is applicable for`('Europe') and ${prefix}department = 'hr'")),
           Rule(Id(15,1), ExpressionRule(s"isMissing(${prefix}id) and ${prefix}department = 'hr'")),
         )
       )
     ),
     lambdaFunctions = Seq(
-      LambdaFunction("Non UK", "array('US','CH','MX','BR')", Id(1,1)),
+/*      LambdaFunction("Non UK", "array('US','CH','MX','BR')", Id(1,1)),
       LambdaFunction("UK & US", "array('US','UK')", Id(2,1)),
       LambdaFunction("Americas", "array('US','MX','BR')", Id(3,1)),
-      LambdaFunction("Europe", "array('CH')", Id(4,1)),
-      LambdaFunction(s"dq is applicable for", s"loc -> array_contains(loc, ${prefix}location)", Id(5,1)),
+      LambdaFunction("Europe", "array('CH')", Id(4,1)),*/
+      LambdaFunction(s"dq is applicable for", s"loc -> array_contains(${theCase("loc")}, ${prefix}location)", Id(5,1)),
       LambdaFunction("isMissing", "wh -> if(wh is null, true, regexp_like(wh,'^\\s*$'))", Id(6,1))
     )
   )
+
+  // the dmn does a context / decision table, this should all constant fold but for fairness it's introduced
+  def theCase(in: String) =
+    s"""
+    CASE
+        WHEN $in = 'Non UK' THEN array('US','CH','MX','BR')
+        WHEN $in = 'UK & US' THEN array('US','UK')
+        WHEN $in = 'Americas' THEN array('US','MX','BR')
+        WHEN $in = 'Europe' THEN array('CH')
+        ELSE array()
+    END
+      """
 
   val jsonRuleSuite = {
     val r = rules("jPayload().") // don't have to introduce a new function, but you would
@@ -75,20 +87,20 @@ object TestData {
   }
 
   def baselineRulesStrings(prefix: String)(implicit sparkSession: SparkSession) =
-    Seq(  s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'sales'",
-      s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'marketing'",
-      s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'hr'",
-      s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'it'",
+    Seq(  s"array_contains(${theCase("'Non UK'")}, ${prefix}location) and ${prefix}department = 'sales'",
+      s"array_contains(${theCase("'UK & US'")}, ${prefix}location) and ${prefix}department = 'marketing'",
+      s"array_contains(${theCase("'Americas'")}, ${prefix}location) and ${prefix}department = 'hr'",
+      s"array_contains(${theCase("'Europe'")}, ${prefix}location) and ${prefix}department = 'it'",
       s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'ops'",
-      s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'marketing'",
-      s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'hr'",
-      s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'it'",
-      s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'sales'",
+      s"array_contains(${theCase("'Non UK'")}, ${prefix}location) and ${prefix}department = 'marketing'",
+      s"array_contains(${theCase("'UK & US'")}, ${prefix}location) and ${prefix}department = 'hr'",
+      s"array_contains(${theCase("'Americas'")}, ${prefix}location) and ${prefix}department = 'it'",
+      s"array_contains(${theCase("'Europe'")}, ${prefix}location) and ${prefix}department = 'sales'",
       s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'sales'",
-      s"array_contains(array('US','CH','MX','BR'), ${prefix}location) and ${prefix}department = 'it'",
-      s"array_contains(array('US','UK'), ${prefix}location) and ${prefix}department = 'sales'",
-      s"array_contains(array('US','MX','BR'), ${prefix}location) and ${prefix}department = 'marketing'",
-      s"array_contains(array('CH'), ${prefix}location) and ${prefix}department = 'hr'",
+      s"array_contains(${theCase("'Non UK'")}, ${prefix}location) and ${prefix}department = 'it'",
+      s"array_contains(${theCase("'UK & US'")}, ${prefix}location) and ${prefix}department = 'sales'",
+      s"array_contains(${theCase("'Americas'")}, ${prefix}location) and ${prefix}department = 'marketing'",
+      s"array_contains(${theCase("'Europe'")}, ${prefix}location) and ${prefix}department = 'hr'",
       s"if(${prefix}id is null, true, regexp_like(${prefix}id,'^\\s*$$')) and ${prefix}department = 'hr'",
     )
 
@@ -143,7 +155,7 @@ object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
   val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    1000000
+  val STEP =    100000
 
   def main(args: Array[String]): Unit = {
 
@@ -262,7 +274,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit($"rr")), "audit_baseline_codegen")
       }
     }
-
+*/
     measure method "audit baseline in codegen" in {
       val spark = _sparkSession
       import spark.implicits._
@@ -273,7 +285,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
     }
-
+/*
     measure method "baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")

@@ -37,6 +37,11 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }
+      measure method "no forceEval in codegen compile evals false" in {
+        _forceCodeGen {
+            using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false")
+        }
+      }
       /*
             measure method "no forceEval in interpreted compile evals false - extra config" in {
               _forceInterpreted {
