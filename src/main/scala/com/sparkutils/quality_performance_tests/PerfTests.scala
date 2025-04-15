@@ -274,7 +274,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit($"rr")), "audit_baseline_codegen")
       }
     }
-*/
+*//*
     measure method "audit baseline in codegen" in {
       val spark = _sparkSession
       import spark.implicits._
@@ -284,7 +284,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
           close()
         } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
-    }
+    }*/
 /*
     measure method "baseline in codegen" in {
       _forceCodeGen {
@@ -357,7 +357,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
       }
     }
-*//*
+*/
     measure method "json audit baseline in codegen" in {
       val spark = _sparkSession
       import spark.implicits._
@@ -367,7 +367,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
           close()
         } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.jsonBaseline)), "json_audit_baseline_codegen")
       }
-    }*/
+    }
     /*
     measure method "json baseline in codegen" in {
       _forceCodeGen {
