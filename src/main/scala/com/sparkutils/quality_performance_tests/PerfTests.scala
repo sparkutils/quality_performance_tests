@@ -192,7 +192,7 @@ trait Fwder {
 }
 
 object TestTypes {
-  type TheRunner = Bench.LocalTime// Bench.OfflineReport // Bench.LocalTime
+  type TheRunner = Bench.OfflineReport// Bench.OfflineReport // Bench.LocalTime
 }
 
 object PerfTests extends TestTypes.TheRunner with PerfTestBase with ExtraPerfTests with Fwder {
