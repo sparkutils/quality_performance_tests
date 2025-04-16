@@ -155,7 +155,7 @@ object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
   val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    100000
+  val STEP =    1000000
 
   def main(args: Array[String]): Unit = {
 
@@ -192,7 +192,7 @@ trait Fwder {
 }
 
 object TestTypes {
-  type TheRunner = Bench.OfflineReport// Bench.OfflineReport // Bench.LocalTime
+  type TheRunner = Bench.OfflineReport // Bench.OfflineReport //Bench.LocalTime
 }
 
 object PerfTests extends TestTypes.TheRunner with PerfTestBase with ExtraPerfTests with Fwder {
@@ -357,7 +357,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_interpreted")
       }
     }
-*/
+
     measure method "json audit baseline in codegen" in {
       val spark = _sparkSession
       import spark.implicits._
@@ -367,7 +367,7 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
           close()
         } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.jsonBaseline)), "json_audit_baseline_codegen")
       }
-    }
+    }*/
     /*
     measure method "json baseline in codegen" in {
       _forceCodeGen {

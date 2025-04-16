@@ -9,12 +9,15 @@ import org.apache.log4j.{Level, LogManager}
 import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.config.LoggerConfig
 import org.apache.spark.sql.ShimUtils.{column, expression}
+import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, UnaryExpression}
+import org.apache.spark.sql.catalyst.optimizer.ConstantFolding
 import org.apache.spark.sql.catalyst.util.GenericArrayData
 import org.apache.spark.sql.functions.{col, udf}
-import org.apache.spark.sql.types.{ArrayType, BooleanType, DataType}
+import org.apache.spark.sql.types.{ArrayType, BooleanType, DataType, ObjectType}
 import org.apache.spark.unsafe.types.UTF8String
+import org.kie.dmn.api.core.DMNResult
 import org.kie.dmn.core.internal.utils.DMNRuntimeBuilder
 import org.kie.dmn.feel.lang.types.impl.ComparablePeriod
 import org.kie.internal.io.ResourceFactory
@@ -49,15 +52,73 @@ object PerfTestUtils extends TestUtils {
    */
   case class DMNFile(locationURI: String, bytes: Array[Byte]) extends Serializable
 
-  case class DMNModelService(name: String, namespace: String, service: String, contextTypeName: String) extends Serializable
+  /**
+   * Model service definitions
+   * @param name
+   * @param namespace
+   * @param service
+   */
+  case class DMNModelService(name: String, namespace: String, service: String) extends Serializable
 
-  case class DMNJsonExpression(dmnFiles: Seq[DMNFile], model: DMNModelService, child: Expression) extends UnaryExpression with CodegenFallback {
+  //, contextTypeName: String
+
+  trait DMNContextProvider
+
+  case class JSONContext(contextPath: String, child: Expression) extends UnaryExpression with CodegenFallback with DMNContextProvider {
 
     @transient
     lazy val mapper = new ObjectMapper()
       .registerModule(new SimpleModule()
         .addSerializer(classOf[ComparablePeriod], new DMNFEELComparablePeriodSerializer()))
       .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+
+    override protected def withNewChildInternal(newChild: Expression): Expression = copy(child = newChild)
+
+    override def nullSafeEval(input: Any): Any = {
+      val i = input.asInstanceOf[UTF8String]
+      val bb = i.getByteBuffer // handles the size of issues
+      assert(bb.hasArray)
+
+      val bain = new ByteArrayInputStream(
+        bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())
+
+      val str = new InputStreamReader(bain, StandardCharsets.UTF_8)
+
+      // assuming it's quicker than using classes
+      val testData = // bytes is a couple of percents slower mapper.readValue(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining(), classOf[java.util.Map[String, Object]])
+        mapper.readValue(str, classOf[java.util.Map[String, Object]])
+
+      (contextPath, testData)
+    }
+
+    override def dataType: DataType = ObjectType(classOf[(String, java.util.Map[String, Object])])
+  }
+
+  trait DMNResultProvider {
+    def process(dmnResult: DMNResult): Any
+
+    def dataType: DataType
+
+    def nullable: Boolean
+  }
+
+  case class SeqOfBools() extends DMNResultProvider {
+
+    override def process(dmnResult: DMNResult): Any = {
+      if (dmnResult.getDecisionResults.getFirst.hasErrors || dmnResult.getDecisionResults.getFirst.getResult == null)
+        null
+      else
+        new GenericArrayData(dmnResult.getDecisionResults.getFirst.getResult.asInstanceOf[util.ArrayList[Boolean]].toArray)
+    }
+
+
+    override def dataType: DataType = ArrayType(BooleanType)
+
+    override def nullable: Boolean = true
+  }
+
+  case class DMNExpression(dmnFiles: Seq[DMNFile], model: DMNModelService, children: Seq[Expression], resultProvider: DMNResultProvider) extends Expression with CodegenFallback {
+    assert(children.forall(_.isInstanceOf[DMNContextProvider]), "Input children must be DMNContextProvider's")
 
     @transient
     lazy val dmnRuntime = {
@@ -74,38 +135,32 @@ object PerfTestUtils extends TestUtils {
         .getOrElseThrow(p => new RuntimeException(p))
     }
 
-    @transient
-    lazy val ctx = dmnRuntime.newContext() // the example pages show context outside of loops, we can re share it for a partition
+    //@transient
+    //lazy val ctx = dmnRuntime.newContext() // the example pages show context outside of loops, we can re share it for a partition
 
     @transient
     lazy val dmnModel = dmnRuntime.getModel(model.name, model.namespace) // the example pages show context outside of loops, we can re share it for a partition
 
-    override def dataType: DataType = ArrayType(BooleanType)
+    override def dataType: DataType = resultProvider.dataType
 
-    override def nullSafeEval(input: Any): Any = {
-      val i = input.asInstanceOf[UTF8String]
-      val bb = i.getByteBuffer // handles the size of issues
-      assert(bb.hasArray)
+    override def eval(input: InternalRow): Any = {
+      val ctx = dmnRuntime.newContext()
+      children.foreach { child =>
+        val res = child.eval(input)
+        if (res != null) {
+          val (contextPath: String, testData: Any) = res
+          ctx.set(contextPath, testData)
+        }
+      }
 
-      val bain = new ByteArrayInputStream(
-        bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())
-
-      val str = new InputStreamReader(bain, StandardCharsets.UTF_8)
-
-      // assuming it's quicker than using classes
-      val testData = // bytes is a couple of percents slower mapper.readValue(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining(), classOf[java.util.Map[String, Object]])
-        mapper.readValue(str, classOf[java.util.Map[String, Object]])
-
-      ctx.set(model.contextTypeName, testData)
-
-      val res = dmnRuntime.evaluateDecisionService(dmnModel, ctx, model.service)
-      if (res.getDecisionResults.getFirst.hasErrors || res.getDecisionResults.getFirst.getResult == null)
-        null
-      else
-        new GenericArrayData(res.getDecisionResults.getFirst.getResult.asInstanceOf[util.ArrayList[Boolean]].toArray)
+      val dmnRes = dmnRuntime.evaluateDecisionService(dmnModel, ctx, model.service)
+      val res = resultProvider.process(dmnRes)
+      res
     }
 
-    override protected def withNewChildInternal(newChild: Expression): Expression = copy(child = newChild)
+    override def nullable: Boolean = resultProvider.nullable
+
+    override protected def withNewChildrenInternal(newChildren: IndexedSeq[Expression]): Expression = copy(children = newChildren)
   }
 
   /**
@@ -114,6 +169,14 @@ object PerfTestUtils extends TestUtils {
    */
   def extraPerfOptions(thunk: Unit): Unit =
     withRewrite(thunk)
+
+  val withExtraConstantFolding = testPlan(ConstantFolding, secondRunWithoutPlan = false) _
+  def rewriteAndFold(thunk: Unit): Unit =
+    withRewrite(
+      withExtraConstantFolding( // attempt a further constant fold for case statements
+        thunk
+      )
+    )
 
   trait ExtraPerfTests extends TestTypes.TheRunner with BaseConfig {
 
@@ -136,42 +199,16 @@ object PerfTestUtils extends TestUtils {
           this.getClass.getClassLoader.getResourceAsStream("decisions.dmn").readAllBytes()
         )
       )
-      val dmnModel = DMNModelService(ns, ns, "DQService", "testData")
+      val dmnModel = DMNModelService(ns, ns, "DQService")
 
       // expression is 1% faster over 1m with no compilation so the udf isn't run
-/*      measure method "json dmn codegen - expression" in {
-        forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(expression(col("payload"))))), "json_dmn_codegen_expression")
-        }
-      }
-*/
+
       measure method "json dmn codegen - expression" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNJsonExpression(dmnFiles, dmnModel, expression(col("payload"))))), "json_dmn_codegen_expression")
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(dmnFiles, dmnModel, Seq(JSONContext("testData", expression(col("payload")))), SeqOfBools()))), "json_dmn_codegen_expression")
         }
       }
 
-      /*measure method "json dmn codegen" in {
-        forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
-        }
-      }
-
-      measure method "count json dmn codegen" in {
-        forceCodeGen {
-          using(rows) afterTests {
-            close()
-          } in evaluateWithCount(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
-        }
-      }
-
-      measure method "cache count json dmn codegen" in {
-        forceCodeGen {
-          using(rows) afterTests {
-            close()
-          } in evaluateWithCacheCount(_.withColumn("quality", dmnUDF(col("payload"))), "json_dmn_codegen")
-        }
-      }*/
       /*
 
       measure method "json dmn interpreted" in {
@@ -194,12 +231,20 @@ object PerfTestUtils extends TestUtils {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config")
           }
         }
-      }*/
+      }
 
       measure method "json no forceEval in codegen compile evals false - extra config" in {
         forceCodeGen {
           extraPerfOptions {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config")
+          }
+        }
+      }*/
+
+      measure method "json no forceEval in codegen compile evals false - extra config fold" in {
+        forceCodeGen {
+          rewriteAndFold {
+            using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.jsonRuleSuite, forceRunnerEval = false, compileEvals = false)), "json_no_forceEval_in_codegen_compile_evals_false_extra_config_fold")
           }
         }
       }
