@@ -17,7 +17,7 @@ import org.apache.spark.sql.catalyst.util.GenericArrayData
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.types.{ArrayType, BooleanType, DataType, ObjectType}
 import org.apache.spark.unsafe.types.UTF8String
-import org.kie.dmn.api.core.DMNResult
+import org.kie.dmn.api.core.{DMNContext, DMNResult}
 import org.kie.dmn.core.internal.utils.DMNRuntimeBuilder
 import org.kie.dmn.feel.lang.types.impl.ComparablePeriod
 import org.kie.internal.io.ResourceFactory
@@ -117,8 +117,13 @@ object PerfTestUtils extends TestUtils {
     override def nullable: Boolean = true
   }
 
-  case class DMNExpression(dmnFiles: Seq[DMNFile], model: DMNModelService, children: Seq[Expression], resultProvider: DMNResultProvider) extends Expression with CodegenFallback {
-    assert(children.forall(_.isInstanceOf[DMNContextProvider]), "Input children must be DMNContextProvider's")
+  trait DMNExpression extends Expression with CodegenFallback {
+
+    def dmnFiles: Seq[DMNFile]
+    def model: DMNModelService
+
+    def children: Seq[Expression]
+    def resultProvider: DMNResultProvider
 
     @transient
     lazy val dmnRuntime = {
@@ -143,6 +148,8 @@ object PerfTestUtils extends TestUtils {
 
     override def dataType: DataType = resultProvider.dataType
 
+    def evaluate(ctx: DMNContext): DMNResult
+
     override def eval(input: InternalRow): Any = {
       val ctx = dmnRuntime.newContext()
       children.foreach { child =>
@@ -153,14 +160,30 @@ object PerfTestUtils extends TestUtils {
         }
       }
 
-      val dmnRes = dmnRuntime.evaluateDecisionService(dmnModel, ctx, model.service)
+      val dmnRes = evaluate(ctx)
       val res = resultProvider.process(dmnRes)
       res
     }
 
     override def nullable: Boolean = resultProvider.nullable
 
+  }
+
+
+  case class DMNDecisionService(dmnFiles: Seq[DMNFile], model: DMNModelService, children: Seq[Expression], resultProvider: DMNResultProvider) extends DMNExpression {
+    assert(children.forall(_.isInstanceOf[DMNContextProvider]), "Input children must be DMNContextProvider's")
+
     override protected def withNewChildrenInternal(newChildren: IndexedSeq[Expression]): Expression = copy(children = newChildren)
+
+    override def evaluate(ctx: DMNContext): DMNResult = dmnRuntime.evaluateDecisionService(dmnModel, ctx, model.service)
+  }
+
+  case class DMNEvaluateAll(dmnFiles: Seq[DMNFile], model: DMNModelService, children: Seq[Expression], resultProvider: DMNResultProvider) extends DMNExpression {
+    assert(children.forall(_.isInstanceOf[DMNContextProvider]), "Input children must be DMNContextProvider's")
+
+    override protected def withNewChildrenInternal(newChildren: IndexedSeq[Expression]): Expression = copy(children = newChildren)
+
+    override def evaluate(ctx: DMNContext): DMNResult = dmnRuntime.evaluateAll(dmnModel, ctx)
   }
 
   /**
@@ -201,14 +224,17 @@ object PerfTestUtils extends TestUtils {
       )
       val dmnModel = DMNModelService(ns, ns, "DQService")
 
-      // expression is 1% faster over 1m with no compilation so the udf isn't run
-
-      measure method "json dmn codegen - expression" in {
+      measure method "json dmn codegen - decision service" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNExpression(dmnFiles, dmnModel, Seq(JSONContext("testData", expression(col("payload")))), SeqOfBools()))), "json_dmn_codegen_expression")
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNDecisionService(dmnFiles, dmnModel, Seq(JSONContext("testData", expression(col("payload")))), SeqOfBools()))), "json_dmn_codegen_decision_service")
         }
       }
 
+      measure method "json dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", column(DMNEvaluateAll(dmnFiles, dmnModel, Seq(JSONContext("testData", expression(col("payload")))), SeqOfBools()))), "json_dmn_codegen_evaluate_all")
+        }
+      }
       /*
 
       measure method "json dmn interpreted" in {
