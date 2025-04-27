@@ -39,7 +39,7 @@ object PerfTestUtils extends TestUtils {
   val execJson = DMNExecution(dmnFiles, dmnModel,
     Seq(DMNInputField("payload", "JSON", "testData")), DMNConfiguration(""))
 
-  val exec = DMNExecution(dmnFiles, dmnModel,
+  val execStruct = DMNExecution(dmnFiles, dmnModel,
     Seq(DMNInputField("location", "String", "testData.location"),
       DMNInputField("idPrefix", "String", "testData.idPrefix"),
       DMNInputField("id", "Int", "testData.id"),
@@ -97,13 +97,13 @@ object PerfTestUtils extends TestUtils {
 
       measure method "struct in dmn codegen - decision service" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(exec)), "struct_in_dmn_codegen_decision_service")
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct)), "struct_in_dmn_codegen_decision_service")
         }
       }
 
       measure method "struct in dmn codegen - evaluate all" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(exec.copy(model = exec.model.copy(service = None)))), "struct_in_dmn_codegen_evaluate_all")
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_dmn_codegen_evaluate_all")
         }
       }
       /*
