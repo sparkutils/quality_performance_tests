@@ -108,8 +108,11 @@
 
         <flowableVersion>7.1.0</flowableVersion>
         <h2Version>2.1.214</h2Version>
+
+        <kogito4SparkVersion>0.0.1-RC3</kogito4SparkVersion>
+        <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
     </properties>
-<!-- -->
+<!--
     <repositories>
         <repository>
             <id>ossrh_snap</id>
@@ -117,7 +120,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
+-->
     <distributionManagement>
         <repository>
             <id>ossrh</id>
@@ -130,7 +133,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
+<!--
     
     <dependencyManagement>
         <dependencies>
@@ -151,7 +154,7 @@
         </dependencies>
     </dependencyManagement>
 
-    
+    -->
     
     <dependencies>
 
@@ -180,6 +183,12 @@
                     <artifactId>antlr4-runtime</artifactId> <! - - 4.10.1 from here, 4.9.3 needed by spark - ->
                 </exclusion>
             </exclusions>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparkutils</groupId>
+            <artifactId>kogito-4-spark_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+            <version>${kogito4SparkVersion}</version>
         </dependency>
         <dependency>
             <groupId>com.globalmentor</groupId>
