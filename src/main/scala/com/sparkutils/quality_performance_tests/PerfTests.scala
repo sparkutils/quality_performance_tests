@@ -31,7 +31,7 @@ object TestData {
         a <- 'a' to 'z'
         td <- dataBasis
       } yield td.copy(idPrefix = s"$a", id = id.toInt)).toSeq
-    }.selectExpr("explode(value) as f").selectExpr("f.*","to_json(f) payload")
+    }.selectExpr("explode(value) as f").selectExpr("f.*","to_json(f) payload", "f struct_payload")
   }
 
   // fixed size of rules and complexity to start with (easier to compare with other tooling)
