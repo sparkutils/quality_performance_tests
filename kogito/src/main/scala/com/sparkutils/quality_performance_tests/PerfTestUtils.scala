@@ -35,17 +35,17 @@ object PerfTestUtils extends TestUtils {
       this.getClass.getClassLoader.getResourceAsStream("decisions.dmn").readAllBytes()
     )
   )
-  val dmnModel = DMNModelService(ns, ns, Some("DQService"), "struct<evaluate: array<boolean>>")
+  val dmnModel = DMNModelService(ns, ns, Some("DQService"), "JSON")//"struct<evaluate: array<boolean>>")
   val execJson = DMNExecution(dmnFiles, dmnModel,
     Seq(DMNInputField("payload", "JSON", "testData")), DMNConfiguration(""))
 
   val execStruct = DMNExecution(dmnFiles, dmnModel,
-    Seq(/*DMNInputField("location", "String", "testData.location"),
+    Seq(DMNInputField("location", "String", "testData.location"),
       DMNInputField("idPrefix", "String", "testData.idPrefix"),
       DMNInputField("id", "Int", "testData.id"),
       DMNInputField("page", "Long", "testData.page"),
-      DMNInputField("department", "String", "testData.department")*/
-      DMNInputField("struct_payload", "struct<location: String, idPrefix: String, id: Int, page: Long, department: String>", "testData")
+      DMNInputField("department", "String", "testData.department")
+//DMNInputField("struct_payload", "struct<location: String, idPrefix: String, id: Int, page: Long, department: String>", "testData")
     ), DMNConfiguration(""))
 
   /**
@@ -84,10 +84,16 @@ object PerfTestUtils extends TestUtils {
           this.getClass.getClassLoader.getResourceAsStream("decisions.dmn").readAllBytes()
         )
       )
-
+/*
       measure method "json in dmn codegen - decision service" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson)), "json_in_dmn_codegen_decision_service")
+        }
+      }*/
+
+      measure method "json in dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_dmn_interpreted_evaluate_all")
         }
       }
 
@@ -96,10 +102,16 @@ object PerfTestUtils extends TestUtils {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_dmn_codegen_evaluate_all")
         }
       }
-
+/*
       measure method "struct in dmn codegen - decision service" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct)), "struct_in_dmn_codegen_decision_service")
+        }
+      } */
+
+      measure method "struct in dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_dmn_interpreted_evaluate_all")
         }
       }
 
