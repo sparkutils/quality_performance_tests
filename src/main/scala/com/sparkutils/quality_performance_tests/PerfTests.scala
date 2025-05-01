@@ -2,10 +2,12 @@ package com.sparkutils.quality_performance_tests
 
 import com.sparkutils.quality
 import com.sparkutils.quality._
+import com.sparkutils.quality.impl.util.ComparableMapConverter
 import com.sparkutils.qualityTests.TestUtils
 import com.sparkutils.quality_performance_tests.PerfTestUtils.ExtraPerfTests
 import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, inputsDir}
 import org.apache.spark.sql
+import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{Column, DataFrame, SaveMode, SparkSession}
 import org.scalameter.api._
 import org.scalameter.picklers.noPickler.instance
@@ -154,8 +156,8 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 250000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    250000
+  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    1000000
 
   def main(args: Array[String]): Unit = {
 
@@ -207,19 +209,24 @@ trait BaseConfig {
 
   implicit def _sparkSession: SparkSession
 
+  def testData(size: Int) = TestData.setup(size, _sparkSession).repartition(4)
+    // _sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")
+
   // dump the file for the row size into a new copy
   def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
+    println("c"+c) // make sure it's used
   }
 
   // show counts do not do much
   def evaluateWithCount(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).count
+    fdf(testData(params)).count
   }
 
   // show behaviour of a .cache first
   def evaluateWithCacheCount(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    val d = fdf(_sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")).cache
+    val d = fdf(testData(params)).cache
     d.count
   }
 

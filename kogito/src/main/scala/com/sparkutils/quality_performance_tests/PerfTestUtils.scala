@@ -91,7 +91,7 @@ object PerfTestUtils extends TestUtils {
         }
       }*/
 
-      measure method "json in dmn interpreted - evaluate all" in {
+      /*measure method "json in dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_dmn_interpreted_evaluate_all")
         }
@@ -102,13 +102,13 @@ object PerfTestUtils extends TestUtils {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_dmn_codegen_evaluate_all")
         }
       }
-/*
+
       measure method "struct in dmn codegen - decision service" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct)), "struct_in_dmn_codegen_decision_service")
         }
-      } */
-
+      }
+*/
       measure method "struct in dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_dmn_interpreted_evaluate_all")
@@ -135,14 +135,14 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }*/
-
+/*
       measure method "no forceEval in interpreted compile evals false - extra config fold" in {
         forceInterpreted {
           rewriteAndFold {
             using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_interpreted_compile_evals_false_extra_config_fold")
           }
         }
-      }
+      }*/
       /*
             measure method "json no forceEval in codegen compile evals false - extra config" in {
               forceCodeGen {
