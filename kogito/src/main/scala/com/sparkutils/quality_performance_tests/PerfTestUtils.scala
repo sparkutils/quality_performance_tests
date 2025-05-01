@@ -40,12 +40,12 @@ object PerfTestUtils extends TestUtils {
     Seq(DMNInputField("payload", "JSON", "testData")), DMNConfiguration(""))
 
   val execStruct = DMNExecution(dmnFiles, dmnModel,
-    Seq(DMNInputField("location", "String", "testData.location"),
+    Seq(/*DMNInputField("location", "String", "testData.location"),
       DMNInputField("idPrefix", "String", "testData.idPrefix"),
       DMNInputField("id", "Int", "testData.id"),
       DMNInputField("page", "Long", "testData.page"),
-      DMNInputField("department", "String", "testData.department")
-//DMNInputField("struct_payload", "struct<location: String, idPrefix: String, id: Int, page: Long, department: String>", "testData")
+      DMNInputField("department", "String", "testData.department") */
+      DMNInputField("struct_payload", "struct<location: String, idPrefix: String, id: Int, page: Long, department: String>", "testData")
     ), DMNConfiguration(""))
 
   /**
