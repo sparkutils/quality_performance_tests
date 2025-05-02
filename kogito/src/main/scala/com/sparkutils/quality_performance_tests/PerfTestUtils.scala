@@ -35,7 +35,7 @@ object PerfTestUtils extends TestUtils {
       this.getClass.getClassLoader.getResourceAsStream("decisions.dmn").readAllBytes()
     )
   )
-  val dmnModel = DMNModelService(ns, ns, Some("DQService"), "JSON")//"struct<evaluate: array<boolean>>")
+  val dmnModel = DMNModelService(ns, ns, Some("DQService"), "struct<evaluate: array<boolean>>")//"JSON")
   val execJson = DMNExecution(dmnFiles, dmnModel,
     Seq(DMNInputField("payload", "JSON", "testData")), DMNConfiguration(""))
 
