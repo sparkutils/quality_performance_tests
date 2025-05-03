@@ -156,8 +156,8 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    1000000
+  val MAXSIZE = 200000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    200000
 
   def main(args: Array[String]): Unit = {
 
@@ -209,14 +209,14 @@ trait BaseConfig {
 
   implicit def _sparkSession: SparkSession
 
-  def testData(size: Int) = TestData.setup(size, _sparkSession).repartition(4)
-    // _sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows")
+  def testData(size: Int): DataFrame = //TestData.setup(size, _sparkSession).repartition(4)
+    _sparkSession.read.parquet(inputsDir + s"/testInputData_${size}_rows")
 
   // dump the file for the row size into a new copy
   def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
-    val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
-    println("c"+c) // make sure it's used
+    fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    /*val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
+    println("c"+c) // make sure it's used*/
   }
 
   // show counts do not do much

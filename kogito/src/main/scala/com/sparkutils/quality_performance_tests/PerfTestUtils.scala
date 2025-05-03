@@ -35,17 +35,22 @@ object PerfTestUtils extends TestUtils {
       this.getClass.getClassLoader.getResourceAsStream("decisions.dmn").readAllBytes()
     )
   )
-  val dmnModel = DMNModelService(ns, ns, Some("DQService"), "struct<evaluate: array<boolean>>")//"JSON")
+  val dmnModel = DMNModelService(ns, ns, Some("DQService"), "struct<evaluate: array<boolean>>")
+  val dmnModelJSON = DMNModelService(ns, ns, Some("DQService"), "JSON")
   val execJson = DMNExecution(dmnFiles, dmnModel,
     Seq(DMNInputField("payload", "JSON", "testData")), DMNConfiguration(""))
 
   val execStruct = DMNExecution(dmnFiles, dmnModel,
-    Seq(/*DMNInputField("location", "String", "testData.location"),
+    Seq(
+      DMNInputField("struct_payload", "struct<location: String, idPrefix: String, id: Int, page: Long, department: String>", "testData")
+    ), DMNConfiguration(""))
+
+  val execFields = DMNExecution(dmnFiles, dmnModel,
+    Seq(DMNInputField("location", "String", "testData.location"),
       DMNInputField("idPrefix", "String", "testData.idPrefix"),
       DMNInputField("id", "Int", "testData.id"),
       DMNInputField("page", "Long", "testData.page"),
-      DMNInputField("department", "String", "testData.department") */
-      DMNInputField("struct_payload", "struct<location: String, idPrefix: String, id: Int, page: Long, department: String>", "testData")
+      DMNInputField("department", "String", "testData.department")
     ), DMNConfiguration(""))
 
   /**
@@ -109,15 +114,76 @@ object PerfTestUtils extends TestUtils {
         }
       }
 */
-      measure method "struct in dmn interpreted - evaluate all" in {
+      measure method "struct in bools out dmn interpreted - evaluate all" in {
         forceInterpreted {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_dmn_interpreted_evaluate_all")
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_interpreted_evaluate_all")
         }
       }
 
-      measure method "struct in dmn codegen - evaluate all" in {
+      measure method "struct in bools out dmn codegen - evaluate all" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_dmn_codegen_evaluate_all")
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_codegen_evaluate_all")
+        }
+      }
+
+      measure method "struct in json out dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = dmnModelJSON.copy(service = None)))), "struct_in_json_out_dmn_interpreted_evaluate_all")
+        }
+      }
+
+      measure method "struct in json out  dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = dmnModelJSON.copy(service = None)))), "struct_in_json_out_dmn_codegen_evaluate_all")
+        }
+      }
+
+      measure method "fields in bools out dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = execFields.model.copy(service = None)))), "fields_in_bools_out_dmn_interpreted_evaluate_all")
+        }
+      }
+
+      measure method "fields in bools out dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = execFields.model.copy(service = None)))), "fields_in_bools_out_dmn_codegen_evaluate_all")
+        }
+      }
+
+
+      measure method "fields in json out dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = dmnModelJSON.copy(service = None)))), "fields_in_json_out_dmn_interpreted_evaluate_all")
+        }
+      }
+
+      measure method "fields in json out dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = dmnModelJSON.copy(service = None)))), "fields_in_json_out_dmn_codegen_evaluate_all")
+        }
+      }
+
+      measure method "json in bools out dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_bools_out_dmn_interpreted_evaluate_all")
+        }
+      }
+
+      measure method "json in bools out dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_bools_out_dmn_codegen_evaluate_all")
+        }
+      }
+
+      measure method "json in json out dmn interpreted - evaluate all" in {
+        forceInterpreted {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_interpreted_evaluate_all")
+        }
+      }
+
+      measure method "json in json out dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_codegen_evaluate_all")
         }
       }
       /*
