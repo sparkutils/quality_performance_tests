@@ -209,7 +209,7 @@ trait BaseConfig {
 
   implicit def _sparkSession: SparkSession
 
-  def testData(size: Int): DataFrame = //TestData.setup(size, _sparkSession).repartition(4)
+  def testData(size: Int): DataFrame = //TestData.setup(size, _sparkSession).repartition(10)
     _sparkSession.read.parquet(inputsDir + s"/testInputData_${size}_rows")
 
   // dump the file for the row size into a new copy

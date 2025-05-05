@@ -126,7 +126,7 @@ object PerfTestUtils extends TestUtils {
         }
       }
 
-      measure method "struct in json out dmn interpreted - evaluate all" in {
+      /*measure method "struct in json out dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = dmnModelJSON.copy(service = None)))), "struct_in_json_out_dmn_interpreted_evaluate_all")
         }
@@ -136,7 +136,7 @@ object PerfTestUtils extends TestUtils {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = dmnModelJSON.copy(service = None)))), "struct_in_json_out_dmn_codegen_evaluate_all")
         }
-      }
+      }*/
 
       measure method "fields in bools out dmn interpreted - evaluate all" in {
         forceInterpreted {
@@ -162,7 +162,7 @@ object PerfTestUtils extends TestUtils {
         }
       }
 
-      measure method "json in bools out dmn interpreted - evaluate all" in {
+      /*measure method "json in bools out dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_bools_out_dmn_interpreted_evaluate_all")
         }
@@ -184,7 +184,7 @@ object PerfTestUtils extends TestUtils {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_codegen_evaluate_all")
         }
-      }
+      }*/
       /*
 
       measure method "json dmn interpreted" in {

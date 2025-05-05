@@ -112,7 +112,7 @@
         <kogito4SparkVersion>0.0.1-RC8-SNAPSHOT</kogito4SparkVersion>
         <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
     </properties>
-<!-- -->
+<!--
     <repositories>
         <repository>
             <id>ossrh_snap</id>
@@ -120,7 +120,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
+-->
     <distributionManagement>
         <repository>
             <id>ossrh</id>
