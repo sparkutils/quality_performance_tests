@@ -114,7 +114,7 @@ object PerfTestUtils extends TestUtils {
         }
       }
 */ // below intersting
-      measure method "struct in bools out dmn interpreted - evaluate all" in {
+      /*measure method "struct in bools out dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_interpreted_evaluate_all")
         }
@@ -124,7 +124,7 @@ object PerfTestUtils extends TestUtils {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_codegen_evaluate_all")
         }
-      }
+      }*/
 
       /*measure method "struct in json out dmn interpreted - evaluate all" in {
         forceInterpreted {
@@ -136,13 +136,13 @@ object PerfTestUtils extends TestUtils {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = dmnModelJSON.copy(service = None)))), "struct_in_json_out_dmn_codegen_evaluate_all")
         }
-      }*/
+      }
 
       measure method "fields in bools out dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = execFields.model.copy(service = None)))), "fields_in_bools_out_dmn_interpreted_evaluate_all")
         }
-      }
+      }*/
 
       measure method "fields in bools out dmn codegen - evaluate all" in {
         forceCodeGen {
@@ -150,7 +150,7 @@ object PerfTestUtils extends TestUtils {
         }
       }
 
-      measure method "fields in json out dmn interpreted - evaluate all" in {
+      /*measure method "fields in json out dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = dmnModelJSON.copy(service = None)))), "fields_in_json_out_dmn_interpreted_evaluate_all")
         }
@@ -160,7 +160,7 @@ object PerfTestUtils extends TestUtils {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execFields.copy(model = dmnModelJSON.copy(service = None)))), "fields_in_json_out_dmn_codegen_evaluate_all")
         }
-      }
+      }*/
 
       /*measure method "json in bools out dmn interpreted - evaluate all" in {
         forceInterpreted {
@@ -168,15 +168,14 @@ object PerfTestUtils extends TestUtils {
         }
       }
 
-      measure method "json in bools out dmn codegen - evaluate all" in {
-        forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_bools_out_dmn_codegen_evaluate_all")
-        }
-      }
-
       measure method "json in json out dmn interpreted - evaluate all" in {
         forceInterpreted {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_interpreted_evaluate_all")
+        }
+      }*/
+      measure method "json in bools out dmn codegen - evaluate all" in {
+        forceCodeGen {
+          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = execJson.model.copy(service = None)))), "json_in_bools_out_dmn_codegen_evaluate_all")
         }
       }
 
@@ -184,7 +183,7 @@ object PerfTestUtils extends TestUtils {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_codegen_evaluate_all")
         }
-      }*/
+      }
       /*
 
       measure method "json dmn interpreted" in {
@@ -208,6 +207,13 @@ object PerfTestUtils extends TestUtils {
           }
         }
       }*/
+      measure method "no forceEval in codgen compile evals false - extra config fold" in {
+        forceCodeGen {
+          rewriteAndFold {
+            using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite, forceRunnerEval = false, compileEvals = false)), "no_forceEval_in_codegen_compile_evals_false_extra_config_fold")
+          }
+        }
+      }
       /*
             measure method "json no forceEval in codegen compile evals false - extra config" in {
               forceCodeGen {
