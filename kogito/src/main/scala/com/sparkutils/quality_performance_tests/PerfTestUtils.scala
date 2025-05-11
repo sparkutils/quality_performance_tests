@@ -119,12 +119,12 @@ object PerfTestUtils extends TestUtils {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_interpreted_evaluate_all")
         }
       }
-
+      */
       measure method "struct in bools out dmn codegen - evaluate all" in {
         forceCodeGen {
           using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_codegen_evaluate_all")
         }
-      }*/
+      }
 
       /*measure method "struct in json out dmn interpreted - evaluate all" in {
         forceInterpreted {
