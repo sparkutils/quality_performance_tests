@@ -109,7 +109,7 @@
         <flowableVersion>7.1.0</flowableVersion>
         <h2Version>2.1.214</h2Version>
 
-        <kogito4SparkVersion>0.0.1-RC20</kogito4SparkVersion>
+        <kogito4SparkVersion>0.0.1-RC21</kogito4SparkVersion>
         <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
     </properties>
 <!-- -->
