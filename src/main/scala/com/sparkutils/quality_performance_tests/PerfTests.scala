@@ -156,7 +156,7 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val MAXSIZE = 100000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
   val STEP =    100000
 
   def main(args: Array[String]): Unit = {

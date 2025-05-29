@@ -190,11 +190,11 @@
             </exclusions>-->
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>com.sparkutils</groupId>
             <artifactId>kogito-4-spark_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${kogito4SparkVersion}</version>
-        </dependency> -->
+        </dependency>
         <dependency>
             <groupId>com.globalmentor</groupId>
             <artifactId>hadoop-bare-naked-local-fs</artifactId>
