@@ -156,8 +156,8 @@ object Args {
 object TestSourceData extends TestUtils {
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 200000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    200000
+  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    100000
 
   def main(args: Array[String]): Unit = {
 
@@ -281,25 +281,23 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         } in evaluate(_.withColumn("rr", TestData.baseline).withColumn("quality", TestData.baselineAudit($"rr")), "audit_baseline_codegen")
       }
     }
-*//*
+*/
     measure method "audit baseline in codegen" in {
       val spark = _sparkSession
       import spark.implicits._
 
       _forceCodeGen {
-        using(rows) afterTests {
-          close()
-        } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
+        using(rows) afterTests { close() } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
-    }*/
-/*
+    }
+
     measure method "baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
     }
 
-    measure method "count baseline in codegen" in {
+    /*measure method "count baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {
           close()
