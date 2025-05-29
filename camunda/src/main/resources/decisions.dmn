@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:included0="common" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="decisions" id="_43720B79-E363-4EFF-A334-4F5C5E052DD3" name="decisions">
-  <import id="_DA152350-4541-47CA-B10C-FB92914A6A8D" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="common" locationURI="file:///C:/Dev/git/quality_performance_tests/camunda/src/main/resources/common.dmn" xmlns:drools="http://www.drools.org/kie/dmn/1.1" drools:modelName="common"/>
+  <import id="_DA152350-4541-47CA-B10C-FB92914A6A8D" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="common" locationURI="common.dmn" xmlns:drools="http://www.drools.org/kie/dmn/1.1" drools:modelName="common"/>
   <decision name="evaluate" id="_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C">
     <variable name="evaluate" id="_8F01A22B-574F-4596-8AE0-55DC85BC5383" typeRef="context" />
     <informationRequirement id="_79ECAE34-3BE2-4C00-A98E-91ACD350430A">

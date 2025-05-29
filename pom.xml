@@ -30,24 +30,24 @@
 
     <profiles>
         <profile>
-            <id>v0.1.3.1-RC5</id>
+            <id>v0.1.3.1-RC11</id>
             <properties>
-                <qualityVersion>0.1.3.1-RC5</qualityVersion>
-                <profileDir>v0_1_3_1_RC5</profileDir>
-            </properties>
-        </profile>
-        <profile>
-            <id>v0.1.3.1-RC4</id>
-            <properties>
-                <qualityVersion>0.1.3.1-RC4</qualityVersion>
-                <profileDir>v0_1_3_1_RC4</profileDir>
+                <qualityVersion>0.1.3.1-RC11</qualityVersion>
+                <profileDir>v0_1_3_1_RC11</profileDir>
             </properties>
         </profile>
         <profile>
             <id>kogito</id>
             <properties>
-                <qualityVersion>0.1.3.1-RC5</qualityVersion>
+                <qualityVersion>0.1.3.1-RC11</qualityVersion>
                 <profileDir>kogito</profileDir>
+            </properties>
+        </profile>
+        <profile>
+            <id>camunda</id>
+            <properties>
+                <qualityVersion>0.1.3.1-RC11</qualityVersion>
+                <profileDir>camunda</profileDir>
             </properties>
         </profile>
         <profile>
@@ -62,17 +62,17 @@
 
         <revision>0.0.1-SNAPSHOT</revision>
 
-        <scalaVersion>2.12.18</scalaVersion>
-        <scalaCompatVersion>2.12</scalaCompatVersion>
+        <scalaVersion>2.13.16</scalaVersion>
+        <scalaCompatVersion>2.13</scalaCompatVersion>
 
-        <sparkVersion>3.5.5</sparkVersion>
-        <sparkCompatVersion>3.5</sparkCompatVersion>
+        <sparkVersion>4.0.0</sparkVersion>
+        <sparkCompatVersion>4.0</sparkCompatVersion>
         <shimRuntime>4.0.0.oss</shimRuntime>
         <jacksonVersion>2.15.2</jacksonVersion>
         <scalaMeterVersion>0.0.2</scalaMeterVersion>
 
         <junitVersion>4.12</junitVersion>
-        <scalatestVersion>3.0.7</scalatestVersion>
+        <scalatestVersion>3.0.9</scalatestVersion>
 
         <mavenExecPluginVersion>3.5.0</mavenExecPluginVersion>
         <mavenProjectInfoReportsPluginVersion>3.4.5</mavenProjectInfoReportsPluginVersion>
@@ -109,8 +109,9 @@
         <flowableVersion>7.1.0</flowableVersion>
         <h2Version>2.1.214</h2Version>
 
-        <kogito4SparkVersion>0.0.1-RC21</kogito4SparkVersion>
-        <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
+        <kogito4SparkVersion>0.0.1-RC23</kogito4SparkVersion>
+        <dbrCompatVersion>4.0.0.oss_</dbrCompatVersion>
+        <camundaVersion>1.10.1</camundaVersion>
     </properties>
 <!-- -->
     <repositories>
@@ -163,7 +164,11 @@
             <artifactId>flowable-dmn-engine</artifactId>
             <version>${flowableVersion}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.camunda.bpm.extension.dmn.scala</groupId>
+            <artifactId>dmn-engine</artifactId>
+            <version>${camundaVersion}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
@@ -185,11 +190,11 @@
             </exclusions>-->
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.sparkutils</groupId>
             <artifactId>kogito-4-spark_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${kogito4SparkVersion}</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>com.globalmentor</groupId>
             <artifactId>hadoop-bare-naked-local-fs</artifactId>
@@ -220,13 +225,13 @@
 
         <dependency>
             <groupId>com.sparkutils</groupId>
-            <artifactId>quality_3.5.0.oss_3.5_2.12</artifactId>
+            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${qualityVersion}</version>
             <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>com.sparkutils.</groupId>
-            <artifactId>quality_3.5.0.oss_3.5_2.12</artifactId>
+            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${qualityVersion}</version>
         </dependency>
         <dependency>
