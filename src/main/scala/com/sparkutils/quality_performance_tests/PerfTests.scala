@@ -167,8 +167,8 @@ object TestSourceData extends ClassicSharedTests {
 
     def setup(params: (Int)): Unit = {
       TestData.setup(params, sparkSession).write.mode(SaveMode.Overwrite).parquet(inputsDir + s"/testInputData_${params}_rows")
-      val n = sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows").rdd.getNumPartitions
-      println(s"wrote $n partitions")
+      //val n = sparkSession.read.parquet(inputsDir + s"/testInputData_${params}_rows").rdd.getNumPartitions
+      //println(s"wrote $n partitions")
     }
 
     for{
