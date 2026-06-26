@@ -30,6 +30,105 @@
 
     <profiles>
         <profile>
+            <id>v0.2.0-RC7_kogito</id>
+            <properties>
+                <qualityVersion>0.2.0-RC7_preview</qualityVersion>
+                <profileDir>kogito_v0.2.0</profileDir>
+
+                <kogitoPomVersion>10.2.0</kogitoPomVersion>
+                <kogitoPluginVersion>10.2.0</kogitoPluginVersion>
+                <shadedKogitoVersion>0.1.0-RC2</shadedKogitoVersion>
+
+                <kogito4SparkVersion>0.1.0-baseline</kogito4SparkVersion>
+                <dbrCompatVersion>4.1.0.oss_</dbrCompatVersion>
+
+                <scalaVersion>2.13.18</scalaVersion>
+                <scalaCompatVersion>2.13</scalaCompatVersion>
+
+                <sparkVersion>4.1.0</sparkVersion>
+                <sparkCompatVersion>4.1</sparkCompatVersion>
+
+                <scalatestVersion>3.0.9</scalatestVersion>
+
+                <testingVersion>0.0.1-RC2</testingVersion>
+
+                <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sparkutils</groupId>
+                    <artifactId>testing-runtime_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.sparkutils.</groupId>
+                    <artifactId>testing_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect-client-jvm_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>v0.2.0-RC7</id>
+            <properties>
+                <qualityVersion>0.2.0-RC7_preview</qualityVersion>
+                <profileDir>v0.2.0</profileDir>
+
+                <kogitoPomVersion>10.2.0</kogitoPomVersion>
+                <kogitoPluginVersion>10.2.0</kogitoPluginVersion>
+                <shadedKogitoVersion>0.1.0-RC2</shadedKogitoVersion>
+
+                <kogito4SparkVersion>0.1.0-baseline</kogito4SparkVersion>
+                <dbrCompatVersion>4.1.0.oss_</dbrCompatVersion>
+
+                <scalaVersion>2.13.18</scalaVersion>
+                <scalaCompatVersion>2.13</scalaCompatVersion>
+
+                <sparkVersion>4.1.0</sparkVersion>
+                <sparkCompatVersion>4.1</sparkCompatVersion>
+
+                <scalatestVersion>3.0.9</scalatestVersion>
+
+                <testingVersion>0.0.1-RC2</testingVersion>
+
+                <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sparkutils</groupId>
+                    <artifactId>testing-runtime_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.sparkutils.</groupId>
+                    <artifactId>testing_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect-client-jvm_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>v0.1.3.1-RC7</id>
             <properties>
                 <qualityVersion>0.1.3.1-RC7</qualityVersion>
@@ -112,7 +211,7 @@
         <kogito4SparkVersion>0.0.1-RC20</kogito4SparkVersion>
         <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
     </properties>
-<!-- -->
+<!--
     <repositories>
         <repository>
             <id>ossrh_snap</id>
@@ -120,7 +219,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
+-->
     <distributionManagement>
         <repository>
             <id>ossrh</id>
@@ -220,13 +319,13 @@
 
         <dependency>
             <groupId>com.sparkutils</groupId>
-            <artifactId>quality_3.5.0.oss_3.5_2.12</artifactId>
+            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${qualityVersion}</version>
             <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>com.sparkutils.</groupId>
-            <artifactId>quality_3.5.0.oss_3.5_2.12</artifactId>
+            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${qualityVersion}</version>
         </dependency>
         <dependency>
@@ -374,7 +473,7 @@
                     </args>
                     <recompileMode>all</recompileMode>
                     <scalaCompatVersion>${scalaCompatVersion}</scalaCompatVersion>
-
+<!--
                     <compilerPlugins>
                         <compilerPlugin>
                             <groupId>org.typelevel</groupId>
@@ -382,6 +481,7 @@
                             <version>0.13.3</version>
                         </compilerPlugin>
                     </compilerPlugins>
+                    -->
                 </configuration>
             </plugin>
             <plugin>

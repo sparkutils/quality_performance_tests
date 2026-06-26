@@ -33,7 +33,7 @@ object PerfTestUtils extends TestUtils {
 
   trait ExtraPerfTests extends TestTypes.TheRunner with BaseConfig {
 
-    performance of "resultWriting_rc5_specifics" config (
+    performance of "resultWriting_rc7_specifics" config (
       exec.minWarmupRuns -> 2,
       exec.maxWarmupRuns -> 4,
       exec.benchRuns -> 4,

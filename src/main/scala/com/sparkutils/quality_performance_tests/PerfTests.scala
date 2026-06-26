@@ -2,11 +2,12 @@ package com.sparkutils.quality_performance_tests
 
 import com.sparkutils.quality
 import com.sparkutils.quality._
-import com.sparkutils.quality.impl.util.ComparableMapConverter
-import com.sparkutils.qualityTests.TestUtils
+import com.sparkutils.qualityTests.util.ClassicSharedTests
 import com.sparkutils.quality_performance_tests.PerfTestUtils.ExtraPerfTests
 import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, inputsDir}
+import com.sparkutils.testing.{ClassicUtils, ConnectionType}
 import org.apache.spark.sql
+import org.apache.spark.sql.SaveMode.Overwrite
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{Column, DataFrame, SaveMode, SparkSession}
 import org.scalameter.api._
@@ -153,7 +154,10 @@ object Args {
   )
 }
 
-object TestSourceData extends TestUtils {
+object TestSourceData extends ClassicSharedTests {
+
+  override val runWith: ConnectionType = com.sparkutils.testing.ClassicOnly
+
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
   val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
@@ -181,12 +185,21 @@ object TestSourceData extends TestUtils {
 trait Fwder {
 
   @transient
-  lazy val utils: TestUtils = new TestUtils {}
+  lazy val utils: ClassicSharedTests =
+    new ClassicSharedTests {
+      override val runWith: ConnectionType = com.sparkutils.testing.ClassicOnly
+    }
 
   // if this blows then debug on CodeGenerator 1294, 1299 and grab code.body
-  def _forceCodeGen[T](f: => T): T = utils.forceCodeGen(f)
+  def _forceCodeGen[T](f: => T): T = {
+    SparkSession.setActiveSession(_sparkSession)
+    utils.forceCodeGen(f)
+  }
 
-  def _forceInterpreted[T](f: => T): T = utils.forceInterpreted(f)
+  def _forceInterpreted[T](f: => T): T = {
+    SparkSession.setActiveSession(_sparkSession)
+    utils.forceInterpreted(f)
+  }
 
   def _outputDir: String = utils.outputDir
 
@@ -214,7 +227,8 @@ trait BaseConfig {
 
   // dump the file for the row size into a new copy
   def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    fdf(testData(params)).write.format("noop").mode(Overwrite).save()
     /*val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
     println("c"+c) // make sure it's used*/
   }
