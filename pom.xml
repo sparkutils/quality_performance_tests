@@ -327,6 +327,23 @@
 
         <dependency>
             <groupId>com.sparkutils</groupId>
+            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+            <version>${qualityVersion}</version>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.sparkutils.</groupId>
+            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+            <version>${qualityVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scalaCompatVersion}</artifactId>
+            <version>${scalatestVersion}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.sparkutils</groupId>
             <artifactId>kogito_shaded</artifactId>
             <version>${shadedKogitoVersion}</version>
             <!--
@@ -369,23 +386,6 @@
                     <artifactId>casbah_${scalaCompatVersion}</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sparkutils</groupId>
-            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
-            <version>${qualityVersion}</version>
-            <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.sparkutils.</groupId>
-            <artifactId>quality_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
-            <version>${qualityVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scalaCompatVersion}</artifactId>
-            <version>${scalatestVersion}</version>
         </dependency>
 
 <!--
