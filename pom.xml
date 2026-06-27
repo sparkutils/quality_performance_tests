@@ -30,7 +30,56 @@
 
     <profiles>
         <profile>
-            <id>v0.2.0-RC7_kogito</id>
+            <id>v0.2.0-RC7_kogito_10.0</id>
+            <properties>
+                <qualityVersion>0.2.0-RC7_preview</qualityVersion>
+                <profileDir>kogito_v0.2.0</profileDir>
+
+                <kogitoPomVersion>10.0.0</kogitoPomVersion>
+                <kogitoPluginVersion>10.0.0</kogitoPluginVersion>
+                <shadedKogitoVersion>0.0.12</shadedKogitoVersion>
+
+                <kogito4SparkVersion>0.0.1-RC23</kogito4SparkVersion>
+                <dbrCompatVersion>4.0.0.oss_</dbrCompatVersion>
+
+                <scalaVersion>2.13.18</scalaVersion>
+                <scalaCompatVersion>2.13</scalaCompatVersion>
+
+                <sparkVersion>4.0.0</sparkVersion>
+                <sparkCompatVersion>4.0</sparkCompatVersion>
+
+                <scalatestVersion>3.0.9</scalatestVersion>
+
+                <testingVersion>0.0.1-RC2</testingVersion>
+
+                <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sparkutils</groupId>
+                    <artifactId>testing-runtime_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.sparkutils.</groupId>
+                    <artifactId>testing_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect-client-jvm_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>v0.2.0-RC7_kogito_10.2</id>
             <properties>
                 <qualityVersion>0.2.0-RC7_preview</qualityVersion>
                 <profileDir>kogito_v0.2.0</profileDir>

@@ -14,7 +14,7 @@ jobs:
     with: # "v0.1.3.1-RC4", "v0.1.3.1-RC11", "kogito"
       theMatrix: |
         {
-          "profile": ["v0.2.0-RC7_kogito"], 
+          "profile": ["v0.2.0-RC7_kogito_10.0"], 
           "scala": ["dummy"]
         }
       storeTarget: target/benchmarks
