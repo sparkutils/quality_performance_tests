@@ -230,7 +230,7 @@
             <id>v0.2.0-RC7</id>
             <properties>
                 <!-- <qualityVersion>0.2.0-RC7_preview2</qualityVersion> -->
-                <qualityVersion>0.2.0-RC4</qualityVersion>
+                <qualityVersion>0.2.0-RC3</qualityVersion>
 
                 <profileDir>v0.2.0</profileDir>
 
