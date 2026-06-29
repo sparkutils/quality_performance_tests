@@ -160,8 +160,8 @@ object TestSourceData extends ClassicSharedTests {
 
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    100000
+  val MAXSIZE = 10000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    1000000
 
   def main(args: Array[String]): Unit = {
 
@@ -227,8 +227,8 @@ trait BaseConfig {
 
   // dump the file for the row size into a new copy
   def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
-    fdf(testData(params)).write.format("noop").mode(Overwrite).save()
+    fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    //fdf(testData(params)).write.format("noop").mode(Overwrite).save()
     /*val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
     println("c"+c) // make sure it's used*/
   }
