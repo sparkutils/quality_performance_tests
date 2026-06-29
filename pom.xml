@@ -178,6 +178,55 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>v0.2.0-RC7_spark3.5</id>
+            <properties>
+                <qualityVersion>0.2.0-RC7_preview</qualityVersion>
+                <profileDir>v0.2.0</profileDir>
+
+                <kogitoPomVersion>10.2.0</kogitoPomVersion>
+                <kogitoPluginVersion>10.2.0</kogitoPluginVersion>
+                <shadedKogitoVersion>0.1.0-RC2</shadedKogitoVersion>
+
+                <kogito4SparkVersion>0.1.0-baseline</kogito4SparkVersion>
+                <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
+
+                <scalaVersion>2.13.18</scalaVersion>
+                <scalaCompatVersion>2.13</scalaCompatVersion>
+
+                <sparkVersion>3.5.2</sparkVersion>
+                <sparkCompatVersion>3.5</sparkCompatVersion>
+
+                <scalatestVersion>3.0.9</scalatestVersion>
+
+                <testingVersion>0.0.1-RC2</testingVersion>
+
+                <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sparkutils</groupId>
+                    <artifactId>testing-runtime_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.sparkutils.</groupId>
+                    <artifactId>testing_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
+                    <version>${testingVersion}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect-client-jvm_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-connect_${scalaCompatVersion}</artifactId>
+                    <version>${sparkVersion}</version>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>v0.2.0-RC7</id>
