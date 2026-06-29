@@ -441,7 +441,6 @@
             <artifactId>scalatest_${scalaCompatVersion}</artifactId>
             <version>${scalatestVersion}</version>
         </dependency>
-
         <dependency>
             <groupId>com.sparkutils</groupId>
             <artifactId>kogito_shaded</artifactId>
