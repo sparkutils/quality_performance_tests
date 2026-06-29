@@ -192,7 +192,7 @@
                 <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
 
                 <scalaVersion>2.13.18</scalaVersion>
-                <scalaCompatVersion>2.13</scalaCompatVersion>
+                <scalaCompatVersion>2.12</scalaCompatVersion>
 
                 <sparkVersion>3.5.2</sparkVersion>
                 <sparkCompatVersion>3.5</sparkCompatVersion>
