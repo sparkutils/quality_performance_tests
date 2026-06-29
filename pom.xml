@@ -230,8 +230,8 @@
             <id>v0.2.0-RC7</id>
             <properties>
                 <!-- <qualityVersion>0.2.0-RC7_preview2</qualityVersion> -->
-                <qualityVersion>0.2.0-i131_subexpr.2</qualityVersion>
-                
+                <qualityVersion>0.2.0-i131_subexpr</qualityVersion>
+
                 <profileDir>v0.2.0</profileDir>
 
                 <kogitoPomVersion>10.2.0</kogitoPomVersion>
