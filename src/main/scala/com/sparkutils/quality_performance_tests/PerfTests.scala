@@ -227,8 +227,8 @@ trait BaseConfig {
 
   // dump the file for the row size into a new copy
   def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
-    //fdf(testData(params)).write.format("noop").mode(Overwrite).save()
+    //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+    fdf(testData(params)).write.format("noop").mode(Overwrite).save()
     /*val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
     println("c"+c) // make sure it's used*/
   }
