@@ -197,8 +197,6 @@
                 <sparkVersion>3.5.2</sparkVersion>
                 <sparkCompatVersion>3.5</sparkCompatVersion>
 
-                <scalatestVersion>3.0.9</scalatestVersion>
-
                 <testingVersion>0.0.1-RC2</testingVersion>
 
                 <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
