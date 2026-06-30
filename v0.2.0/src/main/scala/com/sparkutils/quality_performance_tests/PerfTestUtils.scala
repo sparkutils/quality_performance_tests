@@ -53,6 +53,11 @@ object PerfTestUtils extends ClassicSharedTests {
           }
         }
       }
+      measure method "quality no rewrite" in {
+        _forceCodeGen {
+          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite)), "norewrite")
+        }
+      }
     }
 
   }
