@@ -207,7 +207,7 @@ trait Fwder {
 }
 
 object TestTypes {
-  type TheRunner = Bench.OfflineReport // Bench.OfflineReport //Bench.LocalTime
+  type TheRunner = Bench.OfflineReport //Bench.OfflineReport //Bench.LocalTime
 }
 
 object PerfTests extends TestTypes.TheRunner with PerfTestBase with ExtraPerfTests with Fwder {
@@ -226,12 +226,13 @@ trait BaseConfig {
     _sparkSession.read.parquet(inputsDir + s"/testInputData_${size}_rows")
 
   // dump the file for the row size into a new copy
-  def evaluate(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
-    //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
-    fdf(testData(params)).write.format("noop").mode(Overwrite).save()
-    /*val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
+  def evaluate(thunkWrapper: (=> Unit) => Unit, fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit =
+    thunkWrapper {
+      //fdf(testData(params)).write.mode(SaveMode.Overwrite).parquet(_outputDir + s"/testOutputData_${testCase}_${params}_rows")
+      fdf(testData(params)).write.format("noop").mode(Overwrite).save()
+      /*val c = fdf(testData(params)).select(ComparableMapConverter(col("quality"))).distinct().count
     println("c"+c) // make sure it's used*/
-  }
+    }
 
   // show counts do not do much
   def evaluateWithCount(fdf: DataFrame => DataFrame, testCase: String)(params: (Int)): Unit = {
@@ -243,6 +244,8 @@ trait BaseConfig {
     val d = fdf(testData(params)).cache
     d.count
   }
+
+  def evalIdentity(thunk: => Unit): Unit = thunk
 
   def dumpTime =
     println("Time is " + java.time.LocalTime.now())
@@ -301,13 +304,13 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
       import spark.implicits._
 
       _forceCodeGen {
-        using(rows) afterTests { close() } in evaluate(_.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
+        using(rows) afterTests { close() } in evaluate(evalIdentity, _.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
     }
 
     measure method "baseline in codegen" in {
       _forceCodeGen {
-        using(rows) afterTests {close()} in evaluate(_.withColumn("quality", TestData.baseline), "baseline_codegen")
+        using(rows) afterTests {close()} in evaluate(evalIdentity, _.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
     }
 

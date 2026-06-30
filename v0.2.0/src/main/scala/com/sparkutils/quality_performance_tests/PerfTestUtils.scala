@@ -2,8 +2,9 @@ package com.sparkutils.quality_performance_tests
 import com.sparkutils.quality
 import com.sparkutils.quality.impl.extension.FunNRewrite
 import com.sparkutils.quality.ruleRunner
-import com.sparkutils.qualityTests.util.{ClassicSharedTests}
+import com.sparkutils.qualityTests.util.ClassicSharedTests
 import com.sparkutils.testing.ConnectionType
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.optimizer.ConstantFolding
 import org.scalameter.api._
 
@@ -22,18 +23,25 @@ object PerfTestUtils extends ClassicSharedTests {
     withRewrite(
       thunk
     )
-  /**
-   * Enable any spark wide optimisations for a given run
-   * @param thunk
-   */
-  def rewriteAndFold(thunk: Unit): Unit =
-    withRewrite(
-      withExtraConstantFolding( // attempt a further constant fold for case statements
-        thunk
-      )
-    )
 
   trait ExtraPerfTests extends TestTypes.TheRunner with BaseConfig {
+    /**
+     * Enable any spark wide optimisations for a given run
+     * @param thunk
+     */
+    def rewriteAndFold[T](thunk: => T): T = {
+      var t : T = null.asInstanceOf[T]
+      SparkSession.setActiveSession(_sparkSession)
+
+      withRewrite(
+        withExtraConstantFolding { // attempt a further constant fold for case statements
+          t = thunk
+
+          ()
+        }
+      )
+      t
+    }
 
     performance of "resultWriting_rc7_specifics" config (
       exec.minWarmupRuns -> 2,
@@ -48,16 +56,14 @@ object PerfTestUtils extends ClassicSharedTests {
 
       measure method "quality rewriteAndFold" in {
         _forceCodeGen {
-          rewriteAndFold {
-            using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite)), "rewriteAndFold")
-          }
+          using(rows) afterTests {sparkSession.close()} in evaluate(rewriteAndFold, _.withColumn("quality", ruleRunner(TestData.ruleSuite) ), "rewriteAndFold")
         }
-      }/*
+      }
       measure method "quality no rewrite" in {
         _forceCodeGen {
-          using(rows) afterTests {sparkSession.close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite)), "norewrite")
+          using(rows) afterTests {sparkSession.close()} in evaluate(evalIdentity, _.withColumn("quality", ruleRunner(TestData.ruleSuite)), "norewrite")
         }
-      }*/
+      }
     }
 
   }
