@@ -5,13 +5,11 @@ import com.sparkutils.quality._
 import com.sparkutils.qualityTests.util.ClassicSharedTests
 import com.sparkutils.quality_performance_tests.PerfTestUtils.ExtraPerfTests
 import com.sparkutils.quality_performance_tests.TestSourceData.{MAXSIZE, STEP, inputsDir}
-import com.sparkutils.testing.{ClassicUtils, ConnectionType}
+import com.sparkutils.testing.ConnectionType
 import org.apache.spark.sql
 import org.apache.spark.sql.SaveMode.Overwrite
-import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{Column, DataFrame, SaveMode, SparkSession}
 import org.scalameter.api._
-import org.scalameter.picklers.noPickler.instance
 
 case class TestData(location: String, idPrefix: String, id: Int, page: Long, department: String)
 
@@ -160,8 +158,8 @@ object TestSourceData extends ClassicSharedTests {
 
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 10000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    10000000
+  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    100000
 
   def main(args: Array[String]): Unit = {
 

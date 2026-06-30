@@ -191,13 +191,15 @@
                 <kogito4SparkVersion>0.1.0-baseline</kogito4SparkVersion>
                 <dbrCompatVersion>3.5.0.oss_</dbrCompatVersion>
 
-                <scalaVersion>2.13.18</scalaVersion>
+                <scalaVersion>2.12.18</scalaVersion>
                 <scalaCompatVersion>2.12</scalaCompatVersion>
 
-                <sparkVersion>3.5.2</sparkVersion>
+                <sparkVersion>3.5.5</sparkVersion>
                 <sparkCompatVersion>3.5</sparkCompatVersion>
 
                 <testingVersion>0.0.1-RC2</testingVersion>
+
+                <scalatestVersion>3.0.7</scalatestVersion>
 
                 <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
             </properties>
