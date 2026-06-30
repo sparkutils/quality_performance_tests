@@ -241,13 +241,13 @@
                 <shadedKogitoVersion>0.1.0-RC2</shadedKogitoVersion>
 
                 <kogito4SparkVersion>0.1.0-baseline</kogito4SparkVersion>
-                <dbrCompatVersion>4.1.0.oss_</dbrCompatVersion>
+                <dbrCompatVersion>4.0.0.oss_</dbrCompatVersion>
 
                 <scalaVersion>2.13.18</scalaVersion>
                 <scalaCompatVersion>2.13</scalaCompatVersion>
 
-                <sparkVersion>4.1.0</sparkVersion>
-                <sparkCompatVersion>4.1</sparkCompatVersion>
+                <sparkVersion>4.0.0</sparkVersion>
+                <sparkCompatVersion>4.0</sparkCompatVersion>
 
                 <scalatestVersion>3.0.9</scalatestVersion>
 
