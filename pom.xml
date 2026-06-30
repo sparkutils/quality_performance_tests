@@ -132,7 +132,7 @@
         <profile>
             <id>v0.2.0-RC7_kogito_10.2</id>
             <properties>
-                <qualityVersion>0.2.0-RC7_preview</qualityVersion>
+                <qualityVersion>0.2.0-RC7_preview3</qualityVersion>
                 <profileDir>kogito_v0.2.0</profileDir>
 
                 <kogitoPomVersion>10.2.0</kogitoPomVersion>
