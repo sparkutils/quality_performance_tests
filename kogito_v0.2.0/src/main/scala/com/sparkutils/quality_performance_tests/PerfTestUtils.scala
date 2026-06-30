@@ -9,6 +9,7 @@ import org.apache.spark.sql.functions.col
 import com.sparkutils.dmn._
 import com.sparkutils.qualityTests.util.ClassicSharedTests
 import com.sparkutils.testing.ConnectionType
+import org.apache.spark.sql.SparkSession
 import org.scalameter.api._
 
 import scala.collection.immutable.Seq
@@ -65,14 +66,21 @@ object PerfTestUtils extends ClassicSharedTests {
     withRewrite(thunk)
 
   val withExtraConstantFolding = testPlan(ConstantFolding, secondRunWithoutPlan = false) _
-  def rewriteAndFold(thunk: Unit): Unit =
-    withRewrite(
-      withExtraConstantFolding( // attempt a further constant fold for case statements
-        thunk
-      )
-    )
 
   trait ExtraPerfTests extends TestTypes.TheRunner with BaseConfig {
+    def rewriteAndFold[T](thunk: => T): T = {
+      var t : T = null.asInstanceOf[T]
+      SparkSession.setActiveSession(_sparkSession)
+
+      withRewrite(
+        withExtraConstantFolding { // attempt a further constant fold for case statements
+          t = thunk
+
+          ()
+        }
+      )
+      t
+    }
 
     performance of "resultWriting_dmn_and_rc5_specifics" config (
       exec.minWarmupRuns -> 2,
@@ -126,7 +134,7 @@ object PerfTestUtils extends ClassicSharedTests {
       */
       measure method "struct in bools out dmn codegen - evaluate all" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_codegen_evaluate_all")
+          using(rows) afterTests {close()} in evaluate(evalIdentity, _.withColumn("quality", DMN.dmnEval(execStruct.copy(model = execStruct.model.copy(service = None)))), "struct_in_bools_out_dmn_codegen_evaluate_all")
         }
       }
 
@@ -185,7 +193,7 @@ object PerfTestUtils extends ClassicSharedTests {
 */
       measure method "json in json out dmn codegen - evaluate all" in {
         forceCodeGen {
-          using(rows) afterTests {close()} in evaluate(_.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_codegen_evaluate_all")
+          using(rows) afterTests {close()} in evaluate(evalIdentity, _.withColumn("quality", DMN.dmnEval(execJson.copy(model = dmnModelJSON.copy(service = None)))), "json_in_json_out_dmn_codegen_evaluate_all")
         }
       }
       /*
@@ -213,9 +221,7 @@ object PerfTestUtils extends ClassicSharedTests {
       }*/
       measure method "codegen quality rewrite fold" in {
         forceCodeGen {
-          rewriteAndFold {
-            using(rows) afterTests {close()} in evaluate(_.withColumn("quality", ruleRunner(TestData.ruleSuite)), "rewrite_fold_quality")
-          }
+          using(rows) afterTests {close()} in evaluate(rewriteAndFold, _.withColumn("quality", ruleRunner(TestData.ruleSuite)), "rewrite_fold_quality")
         }
       }
       /*
