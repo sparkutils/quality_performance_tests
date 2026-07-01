@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:included0="common" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="decisions" id="_43720B79-E363-4EFF-A334-4F5C5E052DD3" name="decisions">
-  <import id="_DA152350-4541-47CA-B10C-FB92914A6A8D" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="common" locationURI="common.dmn" xmlns:drools="http://www.drools.org/kie/dmn/1.1" drools:modelName="common"/>
+  <import xmlns:drools="http://www.drools.org/kie/dmn/1.1" id="_DA152350-4541-47CA-B10C-FB92914A6A8D" name="common" importType="http://www.omg.org/spec/DMN/20180521/MODEL/" namespace="common" locationURI="common.dmn" drools:modelName="common" />
   <decision name="evaluate" id="_1B2DFBAA-DD62-4F1D-A375-38FB6A868A8C">
     <variable name="evaluate" id="_8F01A22B-574F-4596-8AE0-55DC85BC5383" typeRef="context" />
     <informationRequirement id="_79ECAE34-3BE2-4C00-A98E-91ACD350430A">
@@ -131,11 +131,6 @@
           <text>common.isMissing(testData.id) and testData.department = &quot;hr&quot;</text>
         </literalExpression>
       </contextEntry>
-      <contextEntry id="_752DE4B2-5CD4-483A-BFDD-2398DA748060">
-        <literalExpression id="_19F151D9-4967-49EB-8A7A-8A5CB8619330" typeRef="context" label="evaluate">
-          <text>[r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15]</text>
-        </literalExpression>
-      </contextEntry>
     </context>
   </decision>
   <decisionService name="DQService" id="_D5EE4628-E48B-4A5D-BF28-FD7EA08C4999">
@@ -234,10 +229,10 @@
         </dmndi:DMNDecisionServiceDividerLine>
       </dmndi:DMNShape>
       <dmndi:DMNShape id="_F81A0B54-FE7B-4B34-9E4F-640D016BD9F3" dmnElementRef="_39E17322-641A-45A9-B634-BD2253DD419A" isCollapsed="false" isListedInputData="false">
-        <dc:Bounds x="740" y="480" width="160" height="80" />
+        <dc:Bounds x="780" y="560" width="160" height="80" />
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="_65B5CF56-58F3-489C-951B-DE65DB7884E6" dmnElementRef="_79ECAE34-3BE2-4C00-A98E-91ACD350430A" sourceElement="_F81A0B54-FE7B-4B34-9E4F-640D016BD9F3" targetElement="_121C753E-4CE6-4555-B3CE-552C049EC582">
-        <di:waypoint x="820" y="520" />
+        <di:waypoint x="860" y="600" />
         <di:waypoint x="1260" y="420" />
       </dmndi:DMNEdge>
     </dmndi:DMNDiagram>
