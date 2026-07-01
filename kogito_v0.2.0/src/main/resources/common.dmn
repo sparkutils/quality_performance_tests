@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="common" id="common" name="common">
+<definitions xmlns="https://www.omg.org/spec/DMN/20240513/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:feel="https://www.omg.org/spec/DMN/20240513/FEEL/" expressionLanguage="https://www.omg.org/spec/DMN/20240513/FEEL/" namespace="common" id="common" name="common">
   <description>common things</description>
   <itemDefinition id="_FB776935-97B3-4952-AEDC-6B0382D0EEB2" name="strings" isCollection="true">
     <typeRef>string</typeRef>
@@ -32,7 +32,7 @@
           <variable id="_755C135E-4918-49BE-87D2-101A25E89613" name="locations_expanded" typeRef="strings" />
           <decisionTable id="_C426F0CB-17BE-4A91-B854-E05CA85E3F9A" typeRef="strings" hitPolicy="UNIQUE" label="locations_expanded">
             <input id="_B45B73AA-999F-4A5D-958C-52D12F33D2B3">
-              <inputExpression typeRef="string">
+              <inputExpression typeRef="string" id="_5242FFD4-C254-4CB5-AA70-A7D82D96ADB4">
                 <text>locations</text>
               </inputExpression>
             </input>
@@ -136,10 +136,10 @@
         </kie:ComponentsWidthsExtension>
       </di:extension>
       <dmndi:DMNShape id="_C4344A8B-6647-4465-8C2A-B34BDEE9CC87" dmnElementRef="_AA35B9A8-1763-497D-9CB8-6155D8017F18" isCollapsed="false" isListedInputData="false">
-        <dc:Bounds x="1160" y="440" width="160" height="80" />
+        <dc:Bounds x="0" y="0" width="160" height="80" />
       </dmndi:DMNShape>
       <dmndi:DMNShape id="_14C8F95C-612D-4C21-924B-B638A19B74A1" dmnElementRef="_86155CFC-BE4D-4016-B161-D182DD67E11F" isCollapsed="false" isListedInputData="false">
-        <dc:Bounds x="1080" y="220" width="160" height="80" />
+        <dc:Bounds x="740" y="140" width="160" height="80" />
       </dmndi:DMNShape>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>
