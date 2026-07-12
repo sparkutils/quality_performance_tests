@@ -134,7 +134,7 @@ object TestData {
 object Args {
   val args = List(
     "-Xmx10g","-Xms10g",// 16GB on github runners, 10gb ok on 21 (12 blows), 12gb fine on jdk 8.
-    "-ea",
+    "-ea", "-server",
     "-XX:+IgnoreUnrecognizedVMOptions",
     "--add-opens=java.base/java.lang=ALL-UNNAMED",
     "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
