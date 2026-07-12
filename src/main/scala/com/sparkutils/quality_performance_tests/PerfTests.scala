@@ -158,8 +158,8 @@ object TestSourceData extends ClassicSharedTests {
 
   val inputsDir = "./target/testInputData"
   // 4 cores on github runners
-  val MAXSIZE = 1000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box , 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
-  val STEP =    100000
+  val MAXSIZE = 1000000000 // 10000000  10mil, takes about 1.5 - 2hrs on dev box with kogito 10.0 in the mix, don't bother with 10.2 which is 2x slower, 2m only on server is 3hours or so without dmn it's over 6hrs with, doing a single 1m run
+  val STEP =    1000000000
 
   def main(args: Array[String]): Unit = {
 
@@ -307,13 +307,13 @@ trait PerfTestBase extends TestTypes.TheRunner with BaseConfig {
         using(rows) afterTests { close() } in evaluate(evalIdentity, _.withColumn("quality", TestData.baselineAudit(TestData.baseline)), "audit_baseline_codegen")
       }
     }
-
+/*
     measure method "baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {close()} in evaluate(evalIdentity, _.withColumn("quality", TestData.baseline), "baseline_codegen")
       }
     }
-
+*/
     /*measure method "count baseline in codegen" in {
       _forceCodeGen {
         using(rows) afterTests {
