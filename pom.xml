@@ -228,9 +228,9 @@
             </dependencies>
         </profile>
         <profile>
-            <id>v0.2.0-RC9</id>
+            <id>v0.2.0</id>
             <properties>
-                <qualityVersion>0.2.0-RC9-preview</qualityVersion>
+                <qualityVersion>0.2.0-perftest</qualityVersion>
 
                 <profileDir>v0.2.0</profileDir>
 
