@@ -230,7 +230,7 @@
         <profile>
             <id>v0.2.0</id>
             <properties>
-                <qualityVersion>0.2.0-perftest</qualityVersion>
+                <qualityVersion>0.2.0-perftest2</qualityVersion>
 
                 <profileDir>v0.2.0</profileDir>
 
@@ -239,17 +239,17 @@
                 <shadedKogitoVersion>0.1.0-RC2</shadedKogitoVersion>
 
                 <kogito4SparkVersion>0.1.0-baseline</kogito4SparkVersion>
-                <dbrCompatVersion>4.1.0.oss_</dbrCompatVersion>
+                <dbrCompatVersion>4.2.0.oss_</dbrCompatVersion>
 
                 <scalaVersion>2.13.18</scalaVersion>
                 <scalaCompatVersion>2.13</scalaCompatVersion>
 
-                <sparkVersion>4.1.0</sparkVersion>
-                <sparkCompatVersion>4.1</sparkCompatVersion>
+                <sparkVersion>4.2.0</sparkVersion>
+                <sparkCompatVersion>4.2</sparkCompatVersion>
 
                 <scalatestVersion>3.0.9</scalatestVersion>
 
-                <testingVersion>0.0.1-RC2</testingVersion>
+                <testingVersion>0.0.1-RC3</testingVersion>
 
                 <testingCompatVersionPrefix>_</testingCompatVersionPrefix>
             </properties>
@@ -505,12 +505,12 @@
                 </exclusion>
             </exclusions>-->
         </dependency>
-
+<!--
         <dependency>
             <groupId>com.sparkutils</groupId>
             <artifactId>kogito-4-spark_${dbrCompatVersion}${sparkCompatVersion}_${scalaCompatVersion}</artifactId>
             <version>${kogito4SparkVersion}</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>com.globalmentor</groupId>
             <artifactId>hadoop-bare-naked-local-fs</artifactId>
